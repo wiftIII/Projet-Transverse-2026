@@ -2,10 +2,7 @@ package controleurs;
 
 import main.ApplicationMedias;
 import modeles.user.Playlist;
-import vues.FactoryView;
-import vues.PlaylistView;
-import vues.PlaylistsView;
-import vues.UserView;
+import vues.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,6 +64,20 @@ public class FactoryController {
             PlaylistsView playlistPage = new PlaylistsView(ApplicationMedias.getFactoryMedia().getUserLogged());
 
             center.add(playlistPage, BorderLayout.CENTER);
+
+            center.revalidate();
+            center.repaint();
+        });
+    }
+
+    public static void openViewLog(JButton button, JPanel jPanel){
+        button.addActionListener(e -> {
+            JPanel center = jPanel;
+            center.removeAll();
+
+            LogView logview = new LogView();
+
+            center.add(logview, BorderLayout.CENTER);
 
             center.revalidate();
             center.repaint();

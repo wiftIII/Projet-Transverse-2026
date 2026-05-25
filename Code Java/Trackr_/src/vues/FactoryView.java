@@ -2,6 +2,7 @@ package vues;
 
 
 import controleurs.FactoryController;
+import controleurs.LogController;
 import controleurs.PlaylistController;
 import main.ApplicationMedias;
 
@@ -21,6 +22,9 @@ public class FactoryView extends JPanel {
     private JButton btnCoupsDeCoeur;
     private JButton btnFilmVu;
     private JButton btnMesListes;
+
+    private JButton btnSwitchProfile;
+
     private JButton btnParametres;
 
     private JTextField searchField;
@@ -62,16 +66,21 @@ public class FactoryView extends JPanel {
         btnFilmVu = createSidebarButton("Films Vu");
         btnMesListes = createSidebarButton("Mes Listes");
 
+
         sidebarPanel.add(btnAccueil);
         sidebarPanel.add(btnProfil);
         sidebarPanel.add(btnCoupsDeCoeur);
         sidebarPanel.add(btnFilmVu);
         sidebarPanel.add(btnMesListes);
+
+
         sidebarPanel.add(Box.createRigidArea(new Dimension(0, 25)));
 
 
         sidebarPanel.add(Box.createVerticalGlue());
 
+        btnSwitchProfile = createSidebarButton("Switch Profile");
+        sidebarPanel.add(btnSwitchProfile);
 
         btnParametres = createSidebarButton("Paramètres");
         sidebarPanel.add(btnParametres);
@@ -124,6 +133,8 @@ public class FactoryView extends JPanel {
         PlaylistController.openPlaylistView(getBtnFilmVu(), centralContentPanel, factoryMedia.getUserLogged().getVu());
         PlaylistController.openPlaylistView(getBtnCoupsDeCoeur(), centralContentPanel, factoryMedia.getUserLogged().getLike());
 
+        FactoryController.openViewLog(getBtnSwitchProfile(), this);
+
         if(sideBar)
             this.add(sidebarPanel, BorderLayout.WEST);
 
@@ -170,6 +181,8 @@ public class FactoryView extends JPanel {
     public JButton getBtnCoupsDeCoeur() { return btnCoupsDeCoeur; }
     public JButton getBtnFilmVu() {return btnFilmVu;}
     public JButton getBtnMesListes() {return btnMesListes;}
+
+    public JButton getBtnSwitchProfile() {return btnSwitchProfile;}
 
     public JButton getBtnParametres() { return btnParametres; }
 
