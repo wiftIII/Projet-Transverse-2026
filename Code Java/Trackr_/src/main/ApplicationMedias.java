@@ -71,7 +71,7 @@ public class ApplicationMedias {
         alana = new User(null, null, "Alana Babibel", "alanabibeldu92@gmail.com", new ArrayList<>(), new ArrayList<>(), playlist_5, playlist_6);
         jordan = new User(null, null, "Jordan Bartoila", "jordinooooooo@yahou.com", new ArrayList<>(), new ArrayList<>(), playlist_7, playlist_8);
 
-        USER_LOGGED = selma;
+        USER_LOGGED = new User("USER LOGGED", "USER_LOGGED@gmail.com");
 
         playlist_1.setCreateur(selma);
         playlist_2.setCreateur(selma);

@@ -36,7 +36,7 @@ public class FactoryController {
             JPanel center = jPanel;
             center.removeAll();
 
-            UserView profilPage = new UserView(ApplicationMedias.getFactoryMedia().getSelma());
+            UserView profilPage = new UserView(ApplicationMedias.getFactoryMedia().getUserLogged());
 
             center.add(profilPage, BorderLayout.CENTER);
 
@@ -64,7 +64,7 @@ public class FactoryController {
             JPanel center = jPanel;
             center.removeAll();
 
-            PlaylistsView playlistPage = new PlaylistsView(ApplicationMedias.getFactoryMedia().getSelma());
+            PlaylistsView playlistPage = new PlaylistsView(ApplicationMedias.getFactoryMedia().getUserLogged());
 
             center.add(playlistPage, BorderLayout.CENTER);
 

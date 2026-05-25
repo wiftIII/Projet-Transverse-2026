@@ -13,7 +13,7 @@ public class UserController {
             JPanel center = jPanel;
             center.removeAll();
 
-            PlaylistsView playlistPage = new PlaylistsView(ApplicationMedias.getFactoryMedia().getSelma());
+            PlaylistsView playlistPage = new PlaylistsView(ApplicationMedias.getFactoryMedia().getUserLogged());
 
             center.add(playlistPage, BorderLayout.CENTER);
 

@@ -2,6 +2,7 @@ package modeles.user;
 
 import modeles.media.Media;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,14 @@ public class Playlist {
     private Date dateCreation;
     private boolean estPrive;
     User createur;
+
+    public Playlist(String nom, User createur) {
+        this.lesMedias = new ArrayList<>();
+        this.nom = nom;
+        this.dateCreation = new Date();
+        this.estPrive = false;
+        this.createur = createur;
+    }
 
     public Playlist(List<Media> lesMedias, String nom, Date dateCreation, boolean estPrive, User createur) {
         this.lesMedias = lesMedias;

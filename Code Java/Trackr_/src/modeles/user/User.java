@@ -17,6 +17,18 @@ public class User {
     Playlist like;
 
 
+    public User(String pseudo, String mail) {
+        this.pseudo = pseudo;
+        this.mail = mail;
+
+        this.sesAvis = new ArrayList<>();
+        this.mesPlaylists = new ArrayList<>();
+        this.follower = new ArrayList<>();
+        this.suivi = new ArrayList<>();
+        this.vu = new Playlist("Média Vu", this);
+        this.like = new Playlist("Coup de Coeur", this);
+    }
+
     public User(List<Avis> sesAvis, List<Playlist> mesPlaylists, String pseudo, String mail, List<User> follower, List<User> suivi, Playlist vu, Playlist like) {
         this.sesAvis = sesAvis;
         this.mesPlaylists = mesPlaylists;
@@ -26,6 +38,10 @@ public class User {
         this.suivi = suivi;
         this.vu = vu;
         this.like = like;
+    }
+
+    public User(){
+
     }
 
     public void follow(User cible) {
