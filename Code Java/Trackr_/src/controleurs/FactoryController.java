@@ -75,6 +75,8 @@ public class FactoryController {
             JPanel center = jPanel;
             center.removeAll();
 
+            ApplicationMedias.getFactoryMedia().setUserLogged(null);
+
             LogView logview = new LogView();
 
             center.add(logview, BorderLayout.CENTER);

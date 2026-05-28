@@ -7,6 +7,8 @@ import modeles.user.Avis;
 import modeles.user.Playlist;
 import modeles.user.User;
 import vues.FactoryView;
+import vues.LogView;
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -117,11 +119,12 @@ public class ApplicationMedias {
         JFrame frame = new JFrame("Trackr");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1280, 720);
-        FactoryView accueilView = new FactoryView(this, true);
-        frame.setContentPane(accueilView);
+        LogView logview = new LogView();
+        frame.setContentPane(logview);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
+        FactoryView accueilView = new FactoryView(this, true);
         factoryview = accueilView;
 
     }

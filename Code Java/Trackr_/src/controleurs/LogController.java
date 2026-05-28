@@ -13,7 +13,9 @@ public class LogController {
 
     public static void openViewFactoryWithUserLogger(JButton button, JPanel jPanel){
         button.addActionListener(e -> {
+
             JPanel center = jPanel;
+            reloadLayout(center);
             center.removeAll();
 
             FactoryView factoryview = new FactoryView(ApplicationMedias.getFactoryMedia(), true);
@@ -26,8 +28,10 @@ public class LogController {
     }
 
     public static void openViewFactoryWithSelma(JButton button, JPanel jPanel){
+
         button.addActionListener(e -> {
             JPanel center = jPanel;
+            reloadLayout(center);
             center.removeAll();
 
             ApplicationMedias.getFactoryMedia().setUserLoggedWithSelma();
@@ -38,6 +42,10 @@ public class LogController {
             center.revalidate();
             center.repaint();
         });
+    }
+
+    public static void reloadLayout(JPanel jpanel){
+        jpanel.setLayout(new BorderLayout());
     }
 
 }
