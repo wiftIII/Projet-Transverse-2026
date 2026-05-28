@@ -40,10 +40,6 @@ public class User {
         this.like = like;
     }
 
-    public User(){
-
-    }
-
     public void follow(User cible) {
         if (cible != null && cible != this && !this.suivi.contains(cible)) {
             this.suivi.add(cible);

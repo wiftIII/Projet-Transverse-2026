@@ -3,6 +3,7 @@ package vues;
 
 import controleurs.FactoryController;
 import controleurs.LogController;
+import controleurs.MediaController;
 import controleurs.PlaylistController;
 import main.ApplicationMedias;
 
@@ -22,6 +23,7 @@ public class FactoryView extends JPanel {
     private JButton btnCoupsDeCoeur;
     private JButton btnFilmVu;
     private JButton btnMesListes;
+    private JButton btnDebugFilm;
 
     private JButton btnSwitchProfile;
 
@@ -65,6 +67,7 @@ public class FactoryView extends JPanel {
         btnCoupsDeCoeur = createSidebarButton("Coups de cœur");
         btnFilmVu = createSidebarButton("Films Vu");
         btnMesListes = createSidebarButton("Mes Listes");
+        btnDebugFilm = createSidebarButton("debugButton");
 
 
         sidebarPanel.add(btnAccueil);
@@ -72,6 +75,7 @@ public class FactoryView extends JPanel {
         sidebarPanel.add(btnCoupsDeCoeur);
         sidebarPanel.add(btnFilmVu);
         sidebarPanel.add(btnMesListes);
+        sidebarPanel.add(btnDebugFilm);
 
 
         sidebarPanel.add(Box.createRigidArea(new Dimension(0, 25)));
@@ -130,8 +134,11 @@ public class FactoryView extends JPanel {
         FactoryController.openViewUser(getBtnProfil(), centralContentPanel);
         FactoryController.openViewFactory(getBtnAccueil(), centralContentPanel);
         FactoryController.openViewPlaylists(getBtnMesListes(), centralContentPanel);
+
         PlaylistController.openPlaylistView(getBtnFilmVu(), centralContentPanel, factoryMedia.getUserLogged().getVu());
         PlaylistController.openPlaylistView(getBtnCoupsDeCoeur(), centralContentPanel, factoryMedia.getUserLogged().getLike());
+
+        MediaController.openMediaView(getBtnDebugFilm(), centralContentPanel, factoryMedia.getMediaEnVrac().getLast());
 
         FactoryController.openViewLog(getBtnSwitchProfile(), this);
 
@@ -174,7 +181,9 @@ public class FactoryView extends JPanel {
     }
 
 
-
+    public JButton getBtnDebugFilm() {
+        return btnDebugFilm;
+    }
 
     public JButton getBtnAccueil() { return btnAccueil; }
     public JButton getBtnProfil() { return btnProfil; }
