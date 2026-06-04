@@ -97,7 +97,8 @@ public class PlaylistView extends JPanel {
         }
         return gridPanel;
     }
-    //creation d'un block playlist
+
+    //creation d'un block media
     private JPanel createMediaItem(Media media) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -106,20 +107,40 @@ public class PlaylistView extends JPanel {
         // On fixe une taille pour que toutes les cartes soient identiques
         card.setPreferredSize(new Dimension(200, 260));
 
-        // --- 1. L'image (simulée par un JLabel avec un fond de couleur) ---
-        JButton imagePlaceholder = new JButton(";)");
-        imagePlaceholder.setFont(new Font("Arial", Font.PLAIN, 50));
-        imagePlaceholder.setOpaque(true);
-        imagePlaceholder.setBackground(COLOR_CARD_BACKGROUND);
-        imagePlaceholder.setForeground(COLOR_TEXT_DIM);
-        PlaylistController.openMediaView(imagePlaceholder, this, media);
+        // --- 1. Le Bouton Image (qui remplace le JLabel et le texte) ---
+        String cheminImage = "images/lalaland.jpg";
+        JButton imageButton = new JButton();
 
+        try {
+            // Chargement et redimensionnement de l'image directement pour le bouton
+            ImageIcon originalIcon = new ImageIcon(cheminImage);
+            Image scaledImage = originalIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+            imageButton.setIcon(new ImageIcon(scaledImage));
+
+            // On enlève les bordures moches du bouton pour ne voir QUE l'image
+            imageButton.setBorderPainted(false);
+            imageButton.setFocusPainted(false);
+            imageButton.setContentAreaFilled(false);
+            imageButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        } catch (Exception e) {
+            // SÉCURITÉ : Si l'image n'est pas trouvée, on remet le texte par défaut
+            imageButton.setText(";)");
+            imageButton.setFont(new Font("Arial", Font.PLAIN, 50));
+            imageButton.setBackground(COLOR_CARD_BACKGROUND);
+            imageButton.setForeground(COLOR_TEXT_DIM);
+            imageButton.setOpaque(true);
+        }
 
         // Tailles fixes pour créer un carré parfait
         Dimension imageSize = new Dimension(200, 200);
-        imagePlaceholder.setPreferredSize(imageSize);
-        imagePlaceholder.setMaximumSize(imageSize);
-        imagePlaceholder.setMinimumSize(imageSize);
+        imageButton.setPreferredSize(imageSize);
+        imageButton.setMaximumSize(imageSize);
+        imageButton.setMinimumSize(imageSize);
+        imageButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // On attache ton contrôleur au NOUVEAU bouton
+        PlaylistController.openMediaView(imageButton, this, media);
 
         // --- 2. Le Titre ---
         JLabel titleLabel = new JLabel(media.getTitre());
@@ -127,7 +148,7 @@ public class PlaylistView extends JPanel {
         titleLabel.setForeground(COLOR_TEXT_LIGHT);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // --- 3. Le nombre d'éléments ---
+        // --- 3. Le nombre d'éléments (La note) ---
         int noteMedia = (int) media.getScoreMoyen();
         String texteElement = "/5";
         JLabel noteLabel = new JLabel(noteMedia + texteElement);
@@ -136,11 +157,13 @@ public class PlaylistView extends JPanel {
         noteLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // --- Assemblage de la carte ---
-        card.add(imagePlaceholder);
-        card.add(Box.createRigidArea(new Dimension(0, 12))); // Espace entre l'image et le titre
+        card.add(imageButton); // On n'ajoute que le bouton (qui contient l'image)
+        card.add(Box.createRigidArea(new Dimension(0, 12)));
         card.add(titleLabel);
-        card.add(Box.createRigidArea(new Dimension(0, 5))); // Espace entre le titre et le compteur
+        card.add(Box.createRigidArea(new Dimension(0, 5)));
         card.add(noteLabel);
+
+        // SUPPRESSION : On n'ajoute plus "imageLabel" à la fin !
 
         return card;
     }
