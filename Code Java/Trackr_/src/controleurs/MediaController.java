@@ -24,4 +24,20 @@ public class MediaController {
         });
     }
 
+    public static void executeButton(JButton button, JPanel jPanel, Media media){
+        button.addActionListener(e -> {
+            JPanel center = jPanel;
+            center.removeAll();
+
+            MediaView mediaViewedView = new MediaView(media);
+
+            center.add(mediaViewedView, BorderLayout.CENTER);
+
+            center.revalidate();
+            center.repaint();
+        });
+    }
+
+
+
 }

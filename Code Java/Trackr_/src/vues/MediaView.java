@@ -29,17 +29,6 @@ public class MediaView extends JPanel {
         contentPanel.setBackground(COLOR_BACKGROUND_DARK);
         contentPanel.setBorder(new EmptyBorder(30, 40, 30, 40));
 
-        // --- 1. BOUTON RETOUR À L'ACCUEIL ---
-        JButton btnBack = new JButton("← Retour à l'accueil");
-        btnBack.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        btnBack.setForeground(COLOR_ACCENT_GREEN);
-        btnBack.setContentAreaFilled(false);
-        btnBack.setBorderPainted(false);
-        btnBack.setFocusPainted(false);
-        btnBack.setAlignmentX(Component.LEFT_ALIGNMENT);
-        btnBack.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        contentPanel.add(btnBack);
-
         contentPanel.add(Box.createRigidArea(new Dimension(0, 25)));
 
         // --- 2. BLOC DU HAUT : JAQUETTE + INFORMATIONS/AVIS ---
