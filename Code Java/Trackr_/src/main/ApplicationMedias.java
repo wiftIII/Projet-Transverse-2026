@@ -80,6 +80,9 @@ public class ApplicationMedias {
 
         USER_LOGGED = new User("USER LOGGED", "USER_LOGGED@gmail.com");
 
+        selma.ajouterAuxFavoris(filmcute4);
+        selma.ajouterAuxFavoris(filmcute3);
+
         playlist_1.setCreateur(selma);
         playlist_2.setCreateur(selma);
         playlist_3.setCreateur(antoine);

@@ -3,6 +3,7 @@ package controleurs;
 
 import modeles.media.Media;
 import modeles.user.Playlist;
+import vues.MediaView;
 import vues.PlaylistView;
 
 import javax.swing.*;
@@ -15,7 +16,7 @@ public class PlaylistController {
             JPanel center = jPanel;
             center.removeAll();
 
-            MediaView mediaView = new Mediaview(media);
+            MediaView mediaView = new MediaView(media);
 
             center.add(mediaView, BorderLayout.CENTER);
 

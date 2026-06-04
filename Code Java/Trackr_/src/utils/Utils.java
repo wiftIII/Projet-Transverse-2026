@@ -1,5 +1,6 @@
 package utils;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class Utils {
@@ -51,4 +52,40 @@ public class Utils {
         }
     }
 
+    public static JLabel createImageLabel(String imagePath, int width, int height) {
+        JLabel label = new JLabel();
+
+        try {
+            // 1. Charger l'image d'origine
+            ImageIcon originalIcon = new ImageIcon(imagePath);
+
+            // 2. Extraire l'objet Image pour le redimensionner
+            Image image = originalIcon.getImage();
+
+            // 3. Redimensionner l'image (Image.SCALE_SMOOTH donne le meilleur rendu visuel)
+            Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+            // 4. Re-créer un ImageIcon avec l'image redimensionnée
+            ImageIcon scaledIcon = new ImageIcon(scaledImage);
+
+            // 5. L'appliquer au JLabel
+            label.setIcon(scaledIcon);
+
+        } catch (Exception e) {
+            System.err.println("Erreur lors du chargement de l'image : " + imagePath);
+            // Si l'image n'est pas trouvée, on met un texte par défaut
+            label.setText("Image introuvable");
+            label.setForeground(Color.RED);
+        }
+
+        // On fixe les dimensions du JLabel pour qu'il respecte la taille demandée
+        Dimension size = new Dimension(width, height);
+        label.setPreferredSize(size);
+        label.setMaximumSize(size);
+        label.setMinimumSize(size);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+
+        return label;
+    }
+    
 }
