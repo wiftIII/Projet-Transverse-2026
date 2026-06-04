@@ -2,8 +2,7 @@ package vues;
 
 
 import controleurs.FactoryController;
-import controleurs.LogController;
-import controleurs.PlaylistController;
+import controleurs.PlaylistsController;
 import main.ApplicationMedias;
 
 import javax.swing.*;
@@ -130,8 +129,8 @@ public class FactoryView extends JPanel {
         FactoryController.openViewUser(getBtnProfil(), centralContentPanel);
         FactoryController.openViewFactory(getBtnAccueil(), centralContentPanel);
         FactoryController.openViewPlaylists(getBtnMesListes(), centralContentPanel);
-        PlaylistController.openPlaylistView(getBtnFilmVu(), centralContentPanel, factoryMedia.getUserLogged().getVu());
-        PlaylistController.openPlaylistView(getBtnCoupsDeCoeur(), centralContentPanel, factoryMedia.getUserLogged().getLike());
+        PlaylistsController.openPlaylistView(getBtnFilmVu(), centralContentPanel, factoryMedia.getUserLogged().getVu());
+        PlaylistsController.openPlaylistView(getBtnCoupsDeCoeur(), centralContentPanel, factoryMedia.getUserLogged().getLike());
 
         FactoryController.openViewLog(getBtnSwitchProfile(), this);
 
