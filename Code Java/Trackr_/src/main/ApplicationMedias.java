@@ -1,8 +1,6 @@
 package main;
 
-import modeles.media.Categorie;
-import modeles.media.Film;
-import modeles.media.Media;
+import modeles.media.*;
 import modeles.user.Avis;
 import modeles.user.Playlist;
 import modeles.user.User;
@@ -48,12 +46,18 @@ public class ApplicationMedias {
         Film filmcute4 = new Film(new ArrayList<>(), Categorie.ROMANCE, "La La Land", new Date(116, 11, 9), "Damien Chazelle");
         Film filmcute5 = new Film(new ArrayList<>(), Categorie.ROMANCE, "Before Sunrise", new Date(95, 0, 27), "Richard Linklater");
 
+        Serie seriecute1 = new Serie(new ArrayList<>(), Categorie.SF, "The Boys", new Date(126, 5, 1), " Eric Kripke", new ArrayList<>(), 8);
+
+        seriecute1.ajouterEpisode(new Episode(new ArrayList<>(), Categorie.SF, "Le Dieu", new Date(126, 5 ,1), "Eric Kripke", seriecute1, null, null, 5, "70min"));
+
+
         mediaEnVrac = new ArrayList<>();
         mediaEnVrac.add(filmcute1);
         mediaEnVrac.add(filmcute2);
         mediaEnVrac.add(filmcute3);
         mediaEnVrac.add(filmcute4);
         mediaEnVrac.add(filmcute5);
+        mediaEnVrac.add(seriecute1);
 
         playlist_1.ajouterMedia(mediaEnVrac.get(0));
         playlist_1.ajouterMedia(mediaEnVrac.get(1));
@@ -135,11 +139,9 @@ public class ApplicationMedias {
         return mediaEnVrac;
     }
 
-
     public static void main(String[] args) {
         new ApplicationMedias();
     }
-
 
     public static FactoryView getFactoryview() {
         return factoryview;

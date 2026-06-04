@@ -37,6 +37,10 @@ public class PlaylistView extends JPanel {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
+
+
+
+
         this.add(scrollPane);
     }
 
