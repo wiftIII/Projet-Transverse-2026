@@ -1,16 +1,17 @@
+
 package vues;
 
+import controleurs.PlaylistController;
+import controleurs.PlaylistsController;
+import modeles.media.Media;
 import modeles.user.Playlist;
-import modeles.user.User;
 import utils.WrapLayout;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-import static utils.Utils.COLOR_ACCENT_GREEN;
-import static utils.Utils.COLOR_BACKGROUND_DARK;
-import static utils.Utils.COLOR_TEXT_LIGHT;
+import static utils.Utils.*;
 
 public class PlaylistView extends JPanel {
 
@@ -82,6 +83,67 @@ public class PlaylistView extends JPanel {
         // et de passer à la ligne suivante si la fenêtre est trop petite.
         JPanel gridPanel = new JPanel(new WrapLayout(FlowLayout.LEFT, 25, 25));
         gridPanel.setBackground(COLOR_BACKGROUND_DARK);
+
+        // Si l'utilisateur a des playlists, on les génère
+        if (playlist.getLesMedias() != null && !playlist.getLesMedias().isEmpty()) {
+            for (Media media : playlist.getLesMedias()) {
+                gridPanel.add(createMediaItem(media));
+            }
+        } else {
+            // Message affiché si aucune playlist n'existe
+            JLabel emptyLabel = new JLabel("Vous n'avez aucun média.");
+            emptyLabel.setForeground(COLOR_TEXT_DIM);
+            emptyLabel.setFont(new Font("Arial", Font.ITALIC, 16));
+            gridPanel.add(emptyLabel);
+        }
+
+        //creation d'un block playlist
+        private JPanel createMediaItem(Media media) {
+            JPanel card = new JPanel();
+            card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+            card.setBackground(COLOR_BACKGROUND_DARK);
+
+            // On fixe une taille pour que toutes les cartes soient identiques
+            card.setPreferredSize(new Dimension(200, 260));
+
+            // --- 1. L'image (simulée par un JLabel avec un fond de couleur) ---
+            JButton imagePlaceholder = new JButton(";)");
+            imagePlaceholder.setFont(new Font("Arial", Font.PLAIN, 50));
+            imagePlaceholder.setOpaque(true);
+            imagePlaceholder.setBackground(COLOR_CARD_BACKGROUND);
+            imagePlaceholder.setForeground(COLOR_TEXT_DIM);
+            PlaylistController.openPlayListView(imagePlaceholder, this, media);
+
+
+            // Tailles fixes pour créer un carré parfait
+            Dimension imageSize = new Dimension(200, 200);
+            imagePlaceholder.setPreferredSize(imageSize);
+            imagePlaceholder.setMaximumSize(imageSize);
+            imagePlaceholder.setMinimumSize(imageSize);
+
+            // --- 2. Le Titre ---
+            JLabel titleLabel = new JLabel(playlist.getNom());
+            titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+            titleLabel.setForeground(COLOR_TEXT_LIGHT);
+            titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            // --- 3. Le nombre d'éléments ---
+            int mediaCount = (playlist.getLesMedias() != null) ? playlist.getLesMedias().size() : 0;
+            String texteElement = (mediaCount <= 1) ? " élément" : " éléments";
+            JLabel countLabel = new JLabel(mediaCount + texteElement);
+            countLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+            countLabel.setForeground(COLOR_TEXT_DIM);
+            countLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            // --- Assemblage de la carte ---
+            card.add(imagePlaceholder);
+            card.add(Box.createRigidArea(new Dimension(0, 12))); // Espace entre l'image et le titre
+            card.add(titleLabel);
+            card.add(Box.createRigidArea(new Dimension(0, 5))); // Espace entre le titre et le compteur
+            card.add(countLabel);
+
+            return card;
+        }
 
         return gridPanel;
     }

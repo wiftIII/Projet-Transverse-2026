@@ -1,6 +1,6 @@
 package vues;
 
-import controleurs.PlaylistController;
+import controleurs.PlaylistsController;
 import modeles.user.Playlist;
 import modeles.user.User;
 import utils.WrapLayout;
@@ -117,7 +117,7 @@ public class PlaylistsView extends JPanel{
         imagePlaceholder.setOpaque(true);
         imagePlaceholder.setBackground(COLOR_CARD_BACKGROUND);
         imagePlaceholder.setForeground(COLOR_TEXT_DIM);
-        PlaylistController.openPlaylistView(imagePlaceholder, this, playlist);
+        PlaylistsController.openPlaylistView(imagePlaceholder, this, playlist);
 
 
         // Tailles fixes pour créer un carré parfait

@@ -1,26 +1,25 @@
-
 package controleurs;
 
-import modeles.media.Media;
 import modeles.user.Playlist;
 import vues.PlaylistView;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class PlaylistController {
+public class PlaylistsController {
 
-    public static void openMediaView(JButton button, JPanel jPanel, Media media){
+    public static void openPlaylistView(JButton button, JPanel jPanel, Playlist playlist){
         button.addActionListener(e -> {
             JPanel center = jPanel;
             center.removeAll();
 
-            MediaView mediaView = new Mediaview(media);
+            PlaylistView playlistView = new PlaylistView(playlist);
 
-            center.add(mediaView, BorderLayout.CENTER);
+            center.add(playlistView, BorderLayout.CENTER);
 
             center.revalidate();
             center.repaint();
         });
     }
+
 }

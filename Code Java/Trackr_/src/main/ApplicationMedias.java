@@ -4,6 +4,7 @@ import modeles.media.*;
 import modeles.user.Avis;
 import modeles.user.Playlist;
 import modeles.user.User;
+import utils.Utils;
 import vues.FactoryView;
 import vues.LogView;
 
