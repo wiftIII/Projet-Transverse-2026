@@ -70,7 +70,7 @@ public class ApplicationMedias {
         Film f5 = new Film(Categorie.SF, "Interstellar", new Date(114, 10, 5), "Christopher Nolan", null, null, "2h49");
         Film f6 = new Film(Categorie.SF, "Inception", new Date(110, 6, 21), "Christopher Nolan", null, null, "2h28");
         Film f7 = new Film(Categorie.SF, "Dune", new Date(121, 8, 15), "Denis Villeneuve", null, null, "2h35");
-        Film f8 = new Film(Categorie.SF, "Dune : Deuxième Partie", new Date(124, 1, 28), "Denis Villeneuve", f7, null, "2h46");
+        Film f8 = new Film(Categorie.SF, "Dune - Deuxième Partie", new Date(124, 1, 28), "Denis Villeneuve", f7, null, "2h46");
         Film f9 = new Film(Categorie.THRILLER, "Hackers", new Date(95, 8, 15), "Iain Softley", null, null, "1h45");
         Film f10 = new Film(Categorie.BIOPIC, "The Social Network", new Date(110, 9, 13), "David Fincher", null, null, "2h00");
 
@@ -83,7 +83,7 @@ public class ApplicationMedias {
         Film f16 = new Film(Categorie.ANIMATION, "Le Géant de Fer", new Date(99, 11, 8), "Brad Bird", null, null, "1h26");
         Film f17 = new Film(Categorie.ANIMATION, "Toy Story", new Date(95, 10, 22), "John Lasseter", null, null, "1h21");
         Film f18 = new Film(Categorie.ANIMATION, "Toy Story 2", new Date(99, 10, 24), "John Lasseter", f17, null, "1h32");
-        Film f19 = new Film(Categorie.ANIMATION, "Spider-Man : New Generation", new Date(118, 11, 12), "Bob Persichetti", null, null, "1h57");
+        Film f19 = new Film(Categorie.ANIMATION, "Spider-Man - New Generation", new Date(118, 11, 12), "Bob Persichetti", null, null, "1h57");
         Film f20 = new Film(Categorie.ANIMATION, "Wall-E", new Date(108, 6, 30), "Andrew Stanton", null, null, "1h38");
 
         // === GROUPE 3 : Aventure, Groupes & Familial ===
@@ -93,7 +93,7 @@ public class ApplicationMedias {
         Film f24 = new Film(Categorie.AVENTURE, "Jumanji", new Date(95, 11, 15), "Joe Johnston", null, null, "1h44");
         Film f25 = new Film(Categorie.FAMILIAL, "E.T., l'extra-terrestre", new Date(82, 5, 11), "Steven Spielberg", null, null, "1h55");
         Film f26 = new Film(Categorie.AVENTURE, "Jurassic Park", new Date(93, 9, 20), "Steven Spielberg", null, null, "2h07");
-        Film f27 = new Film(Categorie.AVENTURE, "Le Monde Perdu : Jurassic Park", new Date(97, 9, 22), "Steven Spielberg", f26, null, "2h09");
+        Film f27 = new Film(Categorie.AVENTURE, "Le Monde Perdu - Jurassic Park", new Date(97, 9, 22), "Steven Spielberg", f26, null, "2h09");
         Film f28 = new Film(Categorie.SF, "Retour vers le futur", new Date(85, 9, 23), "Robert Zemeckis", null, null, "1h56");
         Film f29 = new Film(Categorie.SF, "Retour vers le futur II", new Date(89, 10, 22), "Robert Zemeckis", f28, null, "1h48");
         Film f30 = new Film(Categorie.SF, "Retour vers le futur III", new Date(90, 4, 25), "Robert Zemeckis", f29, null, "1h58");
@@ -111,21 +111,21 @@ public class ApplicationMedias {
         Film f40 = new Film(Categorie.THRILLER, "Prisoners", new Date(113, 9, 9), "Denis Villeneuve", null, null, "2h33");
 
         // === GROUPE 5 : Fantastique ===
-        Film f41 = new Film(Categorie.FANTASTIQUE, "Le Seigneur des Anneaux : La Communauté de l'Anneau", new Date(101, 11, 19), "Peter Jackson", null, null, "2h58");
-        Film f42 = new Film(Categorie.FANTASTIQUE, "Le Seigneur des Anneaux : Les Deux Tours", new Date(102, 11, 18), "Peter Jackson", f41, null, "2h59");
-        Film f43 = new Film(Categorie.FANTASTIQUE, "Le Seigneur des Anneaux : Le Retour du Roi", new Date(103, 11, 17), "Peter Jackson", f42, null, "3h21");
+        Film f41 = new Film(Categorie.FANTASTIQUE, "Le Seigneur des Anneaux - La Communauté de l'Anneau", new Date(101, 11, 19), "Peter Jackson", null, null, "2h58");
+        Film f42 = new Film(Categorie.FANTASTIQUE, "Le Seigneur des Anneaux - Les Deux Tours", new Date(102, 11, 18), "Peter Jackson", f41, null, "2h59");
+        Film f43 = new Film(Categorie.FANTASTIQUE, "Le Seigneur des Anneaux - Le Retour du Roi", new Date(103, 11, 17), "Peter Jackson", f42, null, "3h21");
         Film f44 = new Film(Categorie.FANTASTIQUE, "Harry Potter à l'école des sorciers", new Date(101, 10, 16), "Chris Columbus", null, null, "2h32");
         Film f45 = new Film(Categorie.FANTASTIQUE, "Harry Potter et la Chambre des secrets", new Date(102, 10, 15), "Chris Columbus", f44, null, "2h41");
         Film f46 = new Film(Categorie.FANTASTIQUE, "Harry Potter et le Prisonnier d'Azkaban", new Date(104, 5, 4), "Alfonso Cuarón", f45, null, "2h22");
         Film f47 = new Film(Categorie.FANTASTIQUE, "Le Labyrinthe de Pan", new Date(106, 10, 1), "Guillermo del Toro", null, null, "1h58");
         Film f48 = new Film(Categorie.FANTASTIQUE, "Edward aux mains d'argent", new Date(90, 11, 7), "Tim Burton", null, null, "1h45");
         Film f49 = new Film(Categorie.SF, "Avatar", new Date(109, 11, 16), "James Cameron", null, null, "2h42");
-        Film f50 = new Film(Categorie.SF, "Avatar : La Voie de l'eau", new Date(122, 11, 14), "James Cameron", f49, null, "3h12");
+        Film f50 = new Film(Categorie.SF, "Avatar - La Voie de l'eau", new Date(122, 11, 14), "James Cameron", f49, null, "3h12");
 
         // === GROUPE 6 : Comédie & Musical ===
         Film f51 = new Film(Categorie.COMEDIE, "La Cité de la Peur", new Date(94, 2, 9), "Alain Berbérian", null, null, "1h33");
-        Film f52 = new Film(Categorie.COMEDIE, "Astérix & Obélix : Mission Cléopâtre", new Date(102, 0, 30), "Alain Chabat", null, null, "1h47");
-        Film f53 = new Film(Categorie.COMEDIE, "Kaamelott : Premier Volet", new Date(121, 6, 21), "Alexandre Astier", null, null, "2h00");
+        Film f52 = new Film(Categorie.COMEDIE, "Astérix & Obélix - Mission Cléopâtre", new Date(102, 0, 30), "Alain Chabat", null, null, "1h47");
+        Film f53 = new Film(Categorie.COMEDIE, "Kaamelott - Premier Volet", new Date(121, 6, 21), "Alexandre Astier", null, null, "2h00");
         Film f54 = new Film(Categorie.COMEDIE, "The Grand Budapest Hotel", new Date(114, 1, 26), "Wes Anderson", null, null, "1h39");
         Film f55 = new Film(Categorie.COMEDIE, "Intouchables", new Date(111, 10, 2), "Olivier Nakache & Éric Toledano", null, null, "1h52");
         Film f56 = new Film(Categorie.MUSICAL, "La La Land", new Date(116, 11, 9), "Damien Chazelle", null, null, "2h08");
@@ -185,7 +185,7 @@ public class ApplicationMedias {
         Serie s12 = new Serie(Categorie.HORREUR, "The Last of Us", new Date(123, 0, 15), "Craig Mazin & Neil Druckmann", 9);
         Serie s13 = new Serie(Categorie.COMEDIE, "The Office", new Date(105, 2, 24), "Greg Daniels", 201);
         Serie s14 = new Serie(Categorie.MYSTERE, "Sherlock", new Date(110, 6, 25), "Mark Gatiss & Steven Moffat", 13);
-        Serie s15 = new Serie(Categorie.ANIMATION, "Cyberpunk: Edgerunners", new Date(122, 8, 13), "Hiroyuki Imaishi", 10);
+        Serie s15 = new Serie(Categorie.ANIMATION, "Cyberpunk- Edgerunners", new Date(122, 8, 13), "Hiroyuki Imaishi", 10);
         Serie s16 = new Serie(Categorie.THRILLER, "Mindhunter", new Date(117, 9, 13), "David Fincher", 19);
         Serie s17 = new Serie(Categorie.SF, "Severance", new Date(122, 1, 18), "Dan Erickson", 9);
         Serie s18 = new Serie(Categorie.POLICIER, "True Detective", new Date(114, 0, 12), "Nic Pizzolatto", 24);

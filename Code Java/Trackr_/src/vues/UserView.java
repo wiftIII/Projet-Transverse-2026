@@ -19,6 +19,7 @@ import static utils.Utils.*;
 public class UserView extends JPanel {
 
     User user;
+    UserView view;
 
     public UserView(User user) {
         this.user = user;
@@ -26,6 +27,7 @@ public class UserView extends JPanel {
         // Configuration de base du panel
         this.setLayout(new BorderLayout());
         this.setBackground(COLOR_BACKGROUND_DARK);
+        view = this;
 
         // Panel principal qui va contenir tous les éléments empilés
         JPanel contentPanel = new JPanel();
@@ -139,7 +141,7 @@ public class UserView extends JPanel {
                 badge.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        UserController.openViewUser(user1, mainContainer);
+                        UserController.openViewUser(user1, view);
                     }
 
                     // Optionnel : Changer le curseur en petite main au survol pour indiquer que c'est cliquable
@@ -180,7 +182,7 @@ public class UserView extends JPanel {
                 badge.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        UserController.openViewUser(user1, mainContainer);
+                        UserController.openViewUser(user1, view);
                     }
 
                     // Optionnel : Changer le curseur en petite main au survol pour indiquer que c'est cliquable

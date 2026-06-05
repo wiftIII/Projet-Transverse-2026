@@ -103,24 +103,36 @@ public class PlaylistsView extends JPanel{
     }
 
     //creation d'un block playlist
+//creation d'un block playlist
     private JPanel createPlaylistItem(Playlist playlist) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(COLOR_BACKGROUND_DARK);
 
-        // On fixe une taille pour que toutes les cartes soient identiques
-        card.setPreferredSize(new Dimension(200, 260));
+        // Fixer la taille maximum aide le WrapLayout/FlowLayout à ne pas étirer la carte
+        Dimension cardSize = new Dimension(200, 350);
+        card.setPreferredSize(cardSize);
+        card.setMaximumSize(cardSize);
+        card.setMinimumSize(cardSize);
 
-        // --- 1. L'image (simulée par un JLabel avec un fond de couleur) ---
+        // --- 1. L'image (simulée par un JButton) ---
         JButton imagePlaceholder = new JButton(";)");
         imagePlaceholder.setFont(new Font("Arial", Font.PLAIN, 50));
-        imagePlaceholder.setOpaque(true);
         imagePlaceholder.setBackground(COLOR_CARD_BACKGROUND);
         imagePlaceholder.setForeground(COLOR_TEXT_DIM);
+        imagePlaceholder.setOpaque(true);
+
+        // CORRECTIONS VISUELLES DU BOUTON
+        imagePlaceholder.setBorderPainted(false); // Enlève la bordure disgracieuse du bouton
+        imagePlaceholder.setFocusPainted(false); // Enlève le contour de sélection au clic
+        imagePlaceholder.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Curseur pointeur au survol
+
+        // CORRECTION D'ALIGNEMENT CRITIQUE
+        imagePlaceholder.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         PlaylistsController.openPlaylistView(imagePlaceholder, this, playlist);
 
-
-        // Tailles fixes pour créer un carré parfait
+        // Tailles fixes pour le bouton
         Dimension imageSize = new Dimension(200, 200);
         imagePlaceholder.setPreferredSize(imageSize);
         imagePlaceholder.setMaximumSize(imageSize);
@@ -142,10 +154,15 @@ public class PlaylistsView extends JPanel{
 
         // --- Assemblage de la carte ---
         card.add(imagePlaceholder);
-        card.add(Box.createRigidArea(new Dimension(0, 12))); // Espace entre l'image et le titre
+        card.add(Box.createRigidArea(new Dimension(0, 8))); // Espace entre l'image et le titre
         card.add(titleLabel);
-        card.add(Box.createRigidArea(new Dimension(0, 5))); // Espace entre le titre et le compteur
+        card.add(Box.createRigidArea(new Dimension(0, 2))); // Espace minimal entre les deux textes
         card.add(countLabel);
+
+        // LA CORRECTION EST ICI :
+        // Ce "glue" absorbe tout l'espace vide restant en bas de la carte
+        // et empêche le BoxLayout d'écarter tes lignes de texte.
+        card.add(Box.createVerticalGlue());
 
         return card;
     }
