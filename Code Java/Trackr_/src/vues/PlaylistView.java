@@ -36,10 +36,6 @@ public class PlaylistView extends JPanel {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-
-
-
-
         this.add(scrollPane);
     }
 
@@ -104,27 +100,24 @@ public class PlaylistView extends JPanel {
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(COLOR_BACKGROUND_DARK);
 
-        // On fixe une taille pour que toutes les cartes soient identiques
-        card.setPreferredSize(new Dimension(200, 260));
+        // On augmente légèrement la hauteur pour accommoder le nouveau bouton
+        card.setPreferredSize(new Dimension(200, 500));
 
         // --- 1. Le Bouton Image (qui remplace le JLabel et le texte) ---
-        String cheminImage = "images/lalaland.jpg";
+        String cheminImage = "src/images/" + media.getTitre() +  ".jpg";
         JButton imageButton = new JButton();
 
         try {
-            // Chargement et redimensionnement de l'image directement pour le bouton
             ImageIcon originalIcon = new ImageIcon(cheminImage);
             Image scaledImage = originalIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             imageButton.setIcon(new ImageIcon(scaledImage));
 
-            // On enlève les bordures moches du bouton pour ne voir QUE l'image
             imageButton.setBorderPainted(false);
             imageButton.setFocusPainted(false);
             imageButton.setContentAreaFilled(false);
             imageButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         } catch (Exception e) {
-            // SÉCURITÉ : Si l'image n'est pas trouvée, on remet le texte par défaut
             imageButton.setText(";)");
             imageButton.setFont(new Font("Arial", Font.PLAIN, 50));
             imageButton.setBackground(COLOR_CARD_BACKGROUND);
@@ -132,14 +125,12 @@ public class PlaylistView extends JPanel {
             imageButton.setOpaque(true);
         }
 
-        // Tailles fixes pour créer un carré parfait
         Dimension imageSize = new Dimension(200, 200);
         imageButton.setPreferredSize(imageSize);
         imageButton.setMaximumSize(imageSize);
         imageButton.setMinimumSize(imageSize);
         imageButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // On attache ton contrôleur au NOUVEAU bouton
         PlaylistController.openMediaView(imageButton, this, media);
 
         // --- 2. Le Titre ---
@@ -156,16 +147,62 @@ public class PlaylistView extends JPanel {
         noteLabel.setForeground(COLOR_TEXT_DIM);
         noteLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        JButton removeButton = new JButton("🗑️");
+
+        removeButton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 20));
+
+        removeButton.setForeground(new Color(220, 50, 50));
+        removeButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        removeButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        removeButton.setBorderPainted(false);
+        removeButton.setContentAreaFilled(false);
+        removeButton.setFocusPainted(false);
+
+        removeButton.addActionListener(e -> {
+            int reponse = JOptionPane.showConfirmDialog(
+                    this,
+                    "Êtes-vous sûr de vouloir retirer '" + media.getTitre() + "' de la playlist ?",
+                    "Confirmation de retrait",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            if (reponse == JOptionPane.YES_OPTION) {
+                // 1. Suppression dans les données (Modèle)
+                // Note: pas besoin de passer "card" au contrôleur si on gère l'affichage ici
+                PlaylistController.retirerMediaDePlaylist(media, playlist, card);
+
+                // 2. CORRECTION : Suppression visuelle via le parent direct
+                Container parentContainer = card.getParent(); // On récupère le conteneur de la carte
+
+                if (parentContainer != null) {
+                    parentContainer.remove(card); // On supprime la carte de son parent
+                    parentContainer.revalidate(); // On recalcule la disposition
+                    parentContainer.repaint();    // On redessine l'écran
+                } else {
+                    // Sécurité de secours : si on ne trouve pas le parent, on cache la carte
+                    card.setVisible(false);
+                }
+
+                // 3. Petite popup de succès
+                JOptionPane.showMessageDialog(
+                        this,
+                        media.getTitre() + " a bien été retiré.",
+                        "Succès",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+        });
         // --- Assemblage de la carte ---
-        card.add(imageButton); // On n'ajoute que le bouton (qui contient l'image)
+        card.add(imageButton);
         card.add(Box.createRigidArea(new Dimension(0, 12)));
         card.add(titleLabel);
         card.add(Box.createRigidArea(new Dimension(0, 5)));
         card.add(noteLabel);
-
-        // SUPPRESSION : On n'ajoute plus "imageLabel" à la fin !
+        card.add(Box.createRigidArea(new Dimension(0, 8))); // Espace avant le bouton
+        card.add(removeButton); // Ajout du bouton retirer
 
         return card;
     }
-
 }

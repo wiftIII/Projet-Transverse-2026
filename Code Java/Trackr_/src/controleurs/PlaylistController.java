@@ -24,4 +24,17 @@ public class PlaylistController {
             center.repaint();
         });
     }
+
+    public static void retirerMediaDePlaylist(Media media, Playlist playlistActuelle, JPanel vueParent) {
+        if (playlistActuelle != null && media != null) {
+            // 1. Suppression dans le modèle (données)
+            playlistActuelle.retirerMedia(media);
+            System.out.println("==> Controller: Média '" + media.getTitre() + "' retiré de la playlist.");
+
+            if (vueParent != null) {
+                vueParent.revalidate();
+                vueParent.repaint();
+            }
+        }
+    }
 }
