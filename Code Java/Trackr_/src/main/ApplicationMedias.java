@@ -48,7 +48,14 @@ public class ApplicationMedias {
 
         Serie seriecute1 = new Serie(new ArrayList<>(), Categorie.SF, "The Boys", new Date(126, 5, 1), " Eric Kripke", new ArrayList<>(), 8);
 
-        seriecute1.ajouterEpisode(new Episode(new ArrayList<>(), Categorie.SF, "Le Dieu", new Date(126, 5 ,1), "Eric Kripke", seriecute1, null, null, 5, "70min"));
+        seriecute1.ajouterEpisode(new Episode(new ArrayList<>(), Categorie.SF, "La Règle du jeu", new Date(126, 5, 1), "Dan Trachtenberg", seriecute1, null, null, 1, "60min"));
+        seriecute1.ajouterEpisode(new Episode(new ArrayList<>(), Categorie.SF, "Cherry", new Date(126, 5, 8), "Matt Shakman", seriecute1, null, null, 2, "58min"));
+        seriecute1.ajouterEpisode(new Episode(new ArrayList<>(), Categorie.SF, "Get Some", new Date(126, 5, 15), "Phil Sgriccia", seriecute1, null, null, 3, "55min"));
+        seriecute1.ajouterEpisode(new Episode(new ArrayList<>(), Categorie.SF, "La Fille de l'air", new Date(126, 5, 22), "Fred Toye", seriecute1, null, null, 4, "59min"));
+        seriecute1.ajouterEpisode(new Episode(new ArrayList<>(), Categorie.SF, "Le Dieu", new Date(126, 5, 29), "Eric Kripke", seriecute1, null, null, 5, "70min"));
+        seriecute1.ajouterEpisode(new Episode(new ArrayList<>(), Categorie.SF, "Les Innocents", new Date(126, 6, 5), "Jennifer Phang", seriecute1, null, null, 6, "62min"));
+        seriecute1.ajouterEpisode(new Episode(new ArrayList<>(), Categorie.SF, "L'Auto-défense", new Date(126, 6, 12), "Dan Attias", seriecute1, null, null, 7, "66min"));
+        seriecute1.ajouterEpisode(new Episode(new ArrayList<>(), Categorie.SF, "Tu m'as trouvé", new Date(126, 6, 19), "Eric Kripke", seriecute1, null, null, 8, "65min"));
 
 
         mediaEnVrac = new ArrayList<>();

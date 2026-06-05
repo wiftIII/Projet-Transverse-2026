@@ -6,11 +6,13 @@ import modeles.media.Film;
 import modeles.media.Serie;
 import modeles.media.Episode; // Assure-toi que l'import est correct selon ton architecture
 import modeles.user.User;
+import utils.Utils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static utils.Utils.COLOR_BACKGROUND_DARK;
 import static utils.Utils.COLOR_TEXT_LIGHT;
@@ -74,7 +76,7 @@ public class MediaView extends JPanel {
         circleButtonsPanel.setOpaque(false);
 
         JButton btnHeart = createCircleButton("❤");
-        JButton btnCheck = createCircleButton("\uD83D\uDC4D");
+        JButton btnCheck = createCircleButton("✔");
 
         User currentUser = ApplicationMedias.getFactoryMedia().getUserLogged();
 
@@ -170,7 +172,7 @@ public class MediaView extends JPanel {
 
         detailsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // Section "Votre avis"
+// Section "Votre avis"
         JLabel lblVotreAvis = new JLabel("Votre avis");
         lblVotreAvis.setFont(new Font("SansSerif", Font.BOLD, 16));
         lblVotreAvis.setForeground(COLOR_TEXT_LIGHT);
@@ -179,22 +181,47 @@ public class MediaView extends JPanel {
 
         detailsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
-        // Ligne des 5 étoiles
+        // --- GESTION DYNAMIQUE DES ÉTOILES ---
+        // On utilise un tableau à un élément pour pouvoir modifier la valeur depuis l'événement de clic
+        final int[] noteSelectionnee = {0};
+
         JPanel starsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         starsPanel.setOpaque(false);
         starsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel[] starLabels = new JLabel[5]; // Tableau pour garder une référence aux étoiles
         for (int i = 0; i < 5; i++) {
-            JLabel star = new JLabel(i < 4 ? "★" : "☆");
-            star.setFont(new Font("SansSerif", Font.PLAIN, 22));
-            star.setForeground(i < 4 ? COLOR_STAR_ACTIVE : COLOR_TEXT_DIM);
-            star.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            starsPanel.add(star);
+            final int starIndex = i + 1; // La valeur de la note (1 à 5)
+            starLabels[i] = new JLabel("☆"); // Par défaut, toutes les étoiles sont vides
+            starLabels[i].setFont(new Font("SansSerif", Font.PLAIN, 22));
+            starLabels[i].setForeground(COLOR_TEXT_DIM);
+            starLabels[i].setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+            // Ajout du clic sur l'étoile
+            starLabels[i].addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+                    noteSelectionnee[0] = starIndex; // On enregistre la note
+
+                    // On met à jour l'affichage de toutes les étoiles
+                    for (int j = 0; j < 5; j++) {
+                        if (j < noteSelectionnee[0]) {
+                            starLabels[j].setText("★"); // Pleine
+                            starLabels[j].setForeground(COLOR_STAR_ACTIVE);
+                        } else {
+                            starLabels[j].setText("☆"); // Vide
+                            starLabels[j].setForeground(COLOR_TEXT_DIM);
+                        }
+                    }
+                }
+            });
+            starsPanel.add(starLabels[i]);
         }
         detailsPanel.add(starsPanel);
 
         detailsPanel.add(Box.createRigidArea(new Dimension(0, 15)));
 
-        // Zone de texte pour la critique
+        // --- ZONE DE TEXTE POUR LA CRITIQUE ---
         JTextArea txtCritique = new JTextArea("Écrivez votre critique ici...");
         txtCritique.setFont(new Font("SansSerif", Font.PLAIN, 14));
         txtCritique.setBackground(COLOR_CARD_BACKGROUND);
@@ -209,11 +236,22 @@ public class MediaView extends JPanel {
         txtCritique.setAlignmentX(Component.LEFT_ALIGNMENT);
         txtCritique.setMaximumSize(new Dimension(550, 70));
         txtCritique.setPreferredSize(new Dimension(550, 70));
+
+        // Vider le texte par défaut au premier clic
+        txtCritique.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (txtCritique.getText().equals("Écrivez votre critique ici...")) {
+                    txtCritique.setText("");
+                    txtCritique.setForeground(COLOR_TEXT_LIGHT); // On met le texte en plus clair quand l'utilisateur écrit
+                }
+            }
+        });
         detailsPanel.add(txtCritique);
 
         detailsPanel.add(Box.createRigidArea(new Dimension(0, 15)));
 
-        // Boutons actions sous la critique
+        // --- BOUTONS ACTIONS SOUS LA CRITIQUE ---
         JPanel actionButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
         actionButtonsPanel.setOpaque(false);
         actionButtonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -225,6 +263,36 @@ public class MediaView extends JPanel {
         btnSaveAvis.setFocusPainted(false);
         btnSaveAvis.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
         btnSaveAvis.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // ACTION D'ENREGISTREMENT DE L'AVIS
+        btnSaveAvis.addActionListener(e -> {
+            // 1. Vérifier si une note a été donnée
+            if (noteSelectionnee[0] == 0) {
+                JOptionPane.showMessageDialog(this, "Veuillez sélectionner une note avec les étoiles.", "Note manquante", JOptionPane.WARNING_MESSAGE);
+                return; // On arrête là si pas de note
+            }
+
+            // 2. Récupérer le texte
+            String commentaire = txtCritique.getText();
+            if (commentaire.equals("Écrivez votre critique ici...")) {
+                commentaire = ""; // Si l'utilisateur n'a rien écrit, on garde une chaîne vide
+            }
+
+            // 3. Récupérer l'utilisateur courant et créer l'Avis
+            // Assurez-vous que l'accès à getUserLogged() fonctionne comme précédemment
+            modeles.user.Avis nouvelAvis = new modeles.user.Avis(currentUser, media, new Date(), commentaire, noteSelectionnee[0]);
+
+            // 4. Publier (ajoute l'avis au média et à l'utilisateur)
+            nouvelAvis.publier();
+
+            // 5. Retour visuel pour l'utilisateur
+            JOptionPane.showMessageDialog(this, "Votre avis a bien été enregistré !", "Succès", JOptionPane.INFORMATION_MESSAGE);
+
+            // Optionnel : Désactiver le bouton pour éviter les clics multiples
+            btnSaveAvis.setText("Avis enregistré ✓");
+            btnSaveAvis.setEnabled(false);
+            txtCritique.setEnabled(false);
+        });
 
         JButton btnAddList = new JButton("Ajouter à une liste");
         btnAddList.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -244,7 +312,6 @@ public class MediaView extends JPanel {
         topSectionPanel.add(detailsPanel);
         contentPanel.add(topSectionPanel);
 
-        // --- 3. TRAITEMENT CONDITIONNEL DE LA SECTION ÉPISODES (SÉRIE UNIQUEMENT) ---
         if (media instanceof Serie) {
             Serie laSerie = (Serie) media;
 
@@ -258,14 +325,12 @@ public class MediaView extends JPanel {
 
             contentPanel.add(Box.createRigidArea(new Dimension(0, 15)));
 
-            // Génération dynamique de la liste s'il y a des épisodes configurés
             if (laSerie.getLesEpisodes() != null && !laSerie.getLesEpisodes().isEmpty()) {
                 for (Episode ep : laSerie.getLesEpisodes()) {
-                    contentPanel.add(createEpisodeRow(ep.getTitre(), ep.getDuree())); // Ajuste selon les méthodes de ton objet Episode
+                    contentPanel.add(createEpisodeRow(ep.getTitre(), ep.getDuree()));
                     contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
                 }
             } else {
-                // Fallback si la liste d'épisodes est vide
                 contentPanel.add(createEpisodeRow("S01E01 - Pilot", "58 min"));
             }
         }
@@ -299,12 +364,7 @@ public class MediaView extends JPanel {
         lblDuration.setFont(new Font("SansSerif", Font.PLAIN, 14));
         lblDuration.setForeground(COLOR_TEXT_DIM);
 
-        JLabel lblWatched = new JLabel("✓ Vu");
-        lblWatched.setFont(new Font("SansSerif", Font.BOLD, 14));
-        lblWatched.setForeground(COLOR_ACCENT_GREEN);
-
         rightPanel.add(lblDuration);
-        rightPanel.add(lblWatched);
         row.add(rightPanel, BorderLayout.EAST);
 
         return row;
