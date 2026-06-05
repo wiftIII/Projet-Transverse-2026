@@ -41,19 +41,41 @@ public class MediaView extends JPanel {
         topSectionPanel.setOpaque(false);
         topSectionPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // A. L'Affiche
-        JLabel coverLabel = new JLabel();
-        coverLabel.setPreferredSize(new Dimension(220, 310));
-        coverLabel.setMinimumSize(new Dimension(220, 310));
-        coverLabel.setMaximumSize(new Dimension(220, 310));
-        coverLabel.setBackground(COLOR_CARD_BACKGROUND);
-        coverLabel.setOpaque(true);
-        coverLabel.setBorder(BorderFactory.createLineBorder(COLOR_BACKGROUND_DARK, 1));
-        coverLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        coverLabel.setForeground(COLOR_TEXT_DIM);
-        coverLabel.setText("Affiche " + media.getTitre());
 
-        topSectionPanel.add(coverLabel);
+
+        String cheminImage = "src/images/" + media.getTitre() +  ".jpg";
+        ImageIcon originalIcon = new ImageIcon(cheminImage);
+
+        try {
+            JLabel coverLabel = new JLabel();
+            coverLabel.setPreferredSize(new Dimension(220, 310));
+            coverLabel.setMinimumSize(new Dimension(220, 310));
+            coverLabel.setMaximumSize(new Dimension(220, 310));
+            Image scaledImage = originalIcon.getImage().getScaledInstance(220, 310, Image.SCALE_SMOOTH);
+
+            coverLabel.setIcon(new ImageIcon(scaledImage));
+            coverLabel.setBackground(COLOR_CARD_BACKGROUND);
+            coverLabel.setOpaque(true);
+            coverLabel.setBorder(BorderFactory.createLineBorder(COLOR_BACKGROUND_DARK, 1));
+            coverLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            coverLabel.setForeground(COLOR_TEXT_DIM);
+            topSectionPanel.add(coverLabel);
+        } catch (
+                Exception e
+        ){
+            JLabel coverLabel = new JLabel();
+            coverLabel.setPreferredSize(new Dimension(220, 310));
+            coverLabel.setMinimumSize(new Dimension(220, 310));
+            coverLabel.setMaximumSize(new Dimension(220, 310));
+            coverLabel.setBackground(COLOR_CARD_BACKGROUND);
+            coverLabel.setOpaque(true);
+            coverLabel.setBorder(BorderFactory.createLineBorder(COLOR_BACKGROUND_DARK, 1));
+            coverLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            coverLabel.setForeground(COLOR_TEXT_DIM);
+            coverLabel.setText("Affiche " + media.getTitre());
+            topSectionPanel.add(coverLabel);
+        }
+
         topSectionPanel.add(Box.createRigidArea(new Dimension(40, 0)));
 
         // B. Le panneau de détails

@@ -101,7 +101,7 @@ public class PlaylistView extends JPanel {
         card.setBackground(COLOR_BACKGROUND_DARK);
 
         // On augmente légèrement la hauteur pour accommoder le nouveau bouton
-        card.setPreferredSize(new Dimension(200, 300));
+        card.setPreferredSize(new Dimension(200, 500));
 
         // --- 1. Le Bouton Image (qui remplace le JLabel et le texte) ---
         String cheminImage = "src/images/" + media.getTitre() +  ".jpg";
