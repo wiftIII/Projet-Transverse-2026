@@ -95,7 +95,7 @@ public class FactoryView extends JPanel {
 
         searchField = new JTextField("Rechercher un film, une série, un réalisateur...");
         searchField.setFont(new Font("Arial", Font.PLAIN, 14));
-        searchField.setForeground(new Color(150, 150, 150)); // Texte d'espace réservé (simulé)
+        searchField.setForeground(new Color(150, 150, 150));
         searchField.setBackground(COLOR_CARD_BACKGROUND);
         searchField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(60, 60, 60), 1),

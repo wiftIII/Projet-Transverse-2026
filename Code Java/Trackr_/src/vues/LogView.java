@@ -8,13 +8,17 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
+import static controleurs.LogController.reloadLayout;
 import static utils.Utils.*;
 
 public class LogView extends JPanel {
 
     private JButton btnNewProfile;
     private JButton btnSelma;
+    private JButton btnCreateProfile;
 
     ApplicationMedias factoryMedia;
 
@@ -53,16 +57,24 @@ public class LogView extends JPanel {
 
         // Appel des contrôleurs
 
+        btnNewProfile.addActionListener(e -> {
+
+            JPanel center = loginCard;
+            reloadLayout(center);
+            center.removeAll();
+
+            newProfilePanel();
+
+            center.revalidate();
+            center.repaint();
+        });
+
         LogController.openViewFactoryWithSelma(btnSelma, this);
-        LogController.openViewFactoryWithUserLogger(btnNewProfile, this);
 
         // 5. Ajout de la carte au centre de la vue
         this.add(loginCard);
     }
 
-    /**
-     * Méthode modifiée pour créer des boutons stylisés, centrés et encadrés.
-     */
     private JButton createProfileButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 15));
@@ -92,5 +104,78 @@ public class LogView extends JPanel {
         FactoryController.mouseDesigned(button);
 
         return button;
+    }
+
+    private JPanel newProfilePanel(){
+        JPanel profilePanel = new JPanel();
+        profilePanel.setLayout(new BoxLayout(profilePanel, BoxLayout.Y_AXIS));
+        profilePanel.setBackground(COLOR_SIDEBAR_BACKGROUND);
+
+        profilePanel.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(COLOR_ACCENT_GREEN, 2, true), // Bordure extérieure
+                new EmptyBorder(50, 60, 50, 60) // Espace à l'intérieur de la carte
+        ));
+
+        JLabel appNameLabel = new JLabel("TRACKR", SwingConstants.CENTER);
+        appNameLabel.setFont(new Font("Arial", Font.BOLD, 32));
+        appNameLabel.setForeground(COLOR_ACCENT_GREEN);
+        appNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        profilePanel.add(appNameLabel);
+        profilePanel.add(Box.createRigidArea(new Dimension(0, 40)));
+
+        JTextField searchFieldNom;
+        searchFieldNom = new JTextField("Nom");
+        searchFieldNom.setFont(new Font("Arial", Font.PLAIN, 14));
+        searchFieldNom.setForeground(new Color(150, 150, 150));
+        searchFieldNom.setBackground(COLOR_CARD_BACKGROUND);
+        searchFieldNom.setBorder(BorderFactory.createCompoundBorder(
+                       BorderFactory.createLineBorder(new Color(60, 60, 60), 1),
+                       new EmptyBorder(10, 15, 10, 15)
+        ));
+
+        searchFieldNom.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (searchFieldNom.getText().equals("Nom")) {
+                    searchFieldNom.setText("");
+                    searchFieldNom.setForeground(COLOR_TEXT_LIGHT);
+                }
+            }
+        });
+
+        JTextField searchFieldMail;
+        searchFieldMail = new JTextField("Mail");
+        searchFieldMail.setFont(new Font("Arial", Font.PLAIN, 14));
+        searchFieldMail.setForeground(new Color(150, 150, 150));
+        searchFieldMail.setBackground(COLOR_CARD_BACKGROUND);
+        searchFieldMail.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(60, 60, 60), 1),
+                        new EmptyBorder(10, 15, 10, 15)
+                ));
+
+        searchFieldMail.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (searchFieldMail.getText().equals("Mail")) {
+                    searchFieldMail.setText("");
+                    searchFieldMail.setForeground(COLOR_TEXT_LIGHT);
+                }
+            }
+        });
+
+        btnCreateProfile = createProfileButton("Créer le Profile");
+
+        profilePanel.add(searchFieldNom);
+        profilePanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        profilePanel.add(searchFieldMail);
+        profilePanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        profilePanel.add(btnCreateProfile);
+
+        LogController.openViewFactoryWithUserLogger(btnCreateProfile, this);
+        
+        this.add(profilePanel);
+
+        return profilePanel;
     }
 }
