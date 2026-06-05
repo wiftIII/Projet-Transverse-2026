@@ -12,6 +12,14 @@ public class Avis {
     private String commentaire;
     private int nombreEtoiles;
 
+    public Avis(User createur, Media mediaAssocie, String commentaire, int nombreEtoiles) {
+        this.createur = createur;
+        this.mediaAssocie = mediaAssocie;
+        this.dateDeCreation = new Date();
+        this.commentaire = commentaire;
+        this.nombreEtoiles = nombreEtoiles;
+    }
+
     public Avis(User createur, Media mediaAssocie, Date dateDeCreation, String commentaire, int nombreEtoiles) {
         this.createur = createur;
         this.mediaAssocie = mediaAssocie;

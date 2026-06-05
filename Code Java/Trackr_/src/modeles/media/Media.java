@@ -1,7 +1,9 @@
 package modeles.media;
 
 import modeles.user.Avis;
+import modeles.user.User;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +15,14 @@ public abstract class Media {
     private Date date;
     private String realisateur;
 
+
+    public Media(Categorie laCategorie, String titre, Date date, String realisateur) {
+        this.lesAvis = new ArrayList<>();
+        this.laCategorie = laCategorie;
+        this.titre = titre;
+        this.date = date;
+        this.realisateur = realisateur;
+    }
 
     public Media(List<Avis> lesAvis, Categorie laCategorie, String titre, Date date, String realisateur) {
         this.lesAvis = lesAvis;
@@ -31,6 +41,10 @@ public abstract class Media {
             somme += avis.getNombreEtoiles();
         }
         return somme / lesAvis.size();
+    }
+
+    public void newAvis(User userCreateur, String commentaire, int nbEtoiles){
+        new Avis(userCreateur, this, commentaire, nbEtoiles).publier();
     }
 
     @Override

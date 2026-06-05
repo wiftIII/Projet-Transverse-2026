@@ -1,5 +1,8 @@
 package utils;
 
+import modeles.media.Episode;
+import modeles.media.Serie;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -86,6 +89,43 @@ public class Utils {
         label.setHorizontalAlignment(SwingConstants.CENTER);
 
         return label;
+    }
+
+    public static void genererEpisodesPourSerie(Serie serie, String dureeMoyenne, int limiteEpisodes) {
+        Episode episodePrecedent = null;
+
+        // On prend le minimum entre la limite fixée et le vrai nombre d'épisodes de la série
+        int nbA_Generer = Math.min(limiteEpisodes, serie.getNombreEpisodes());
+
+        for (int i = 1; i <= nbA_Generer; i++) {
+
+            int numSaison = 1; // Pour simplifier, on met tout en saison 1
+            String titreEpisode = "Épisode " + i;
+
+            // 1. Création de l'épisode
+            Episode nouvelEpisode = new Episode(
+                    serie.getLaCategorie(),
+                    titreEpisode,
+                    serie.getDate(),
+                    serie.getRealisateur(),
+                    serie,
+                    null, // Episode suivant (sera lié au tour prochain)
+                    episodePrecedent,
+                    numSaison,
+                    dureeMoyenne
+            );
+
+            // 2. Mise à jour de la chaîne (Lien avec le précédent)
+            if (episodePrecedent != null) {
+                episodePrecedent.setEpisodeSuivant(nouvelEpisode);
+            }
+
+            // 3. Ajout à la série
+            serie.ajouterEpisode(nouvelEpisode);
+
+            // 4. Préparation pour le tour suivant
+            episodePrecedent = nouvelEpisode;
+        }
     }
 
 }

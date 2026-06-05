@@ -12,8 +12,11 @@ public class Film extends Media {
     private String duree;
 
 
-    public Film(List<Avis> lesAvis, Categorie laCategorie, String titre, Date date, String realisateur) {
-        super(lesAvis, laCategorie, titre, date, realisateur);
+    public Film(Categorie laCategorie, String titre, Date date, String realisateur, Film precedent, Film suivant, String duree) {
+        super(laCategorie, titre, date, realisateur);
+        this.filmPrecedent = precedent;
+        this.filmSuivant = suivant;
+        this.duree = duree;
     }
 
     @Override

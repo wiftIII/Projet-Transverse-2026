@@ -14,8 +14,8 @@ public class Episode extends Media {
     private String duree;
 
 
-    public Episode(List<Avis> lesAvis, Categorie laCategorie, String titre, Date date, String realisateur, Serie serieMere, Episode episodeSuivant, Episode episodePrecedent, int numeroDeSaison, String duree) {
-        super(lesAvis, laCategorie, titre, date, realisateur);
+    public Episode(Categorie laCategorie, String titre, Date date, String realisateur, Serie serieMere, Episode episodeSuivant, Episode episodePrecedent, int numeroDeSaison, String duree) {
+        super(laCategorie, titre, date, realisateur);
         this.serieMere = serieMere;
         this.episodeSuivant = episodeSuivant;
         this.episodePrecedent = episodePrecedent;

@@ -25,8 +25,8 @@ public class User {
         this.mesPlaylists = new ArrayList<>();
         this.follower = new ArrayList<>();
         this.suivi = new ArrayList<>();
-        this.vu = new Playlist("Média Vu", this);
-        this.like = new Playlist("Coup de Coeur", this);
+        this.vu = new Playlist("Média Vu", this, false);
+        this.like = new Playlist("Coup de Coeur", this, false);
     }
 
     public User(List<Avis> sesAvis, List<Playlist> mesPlaylists, String pseudo, String mail, List<User> follower, List<User> suivi, Playlist vu, Playlist like) {
@@ -77,7 +77,7 @@ public class User {
     }
 
     public void creerNouvellePlaylist(String nomPlaylist, boolean estPrive) {
-        Playlist nouvelle = new Playlist(new ArrayList<>(), nomPlaylist, new Date(), estPrive, this);
+        Playlist nouvelle = new Playlist(nomPlaylist, this, estPrive);
         this.mesPlaylists.add(nouvelle);
         System.out.println("Playlist " + nomPlaylist + " créée avec succès par " + this.pseudo);
     }

@@ -14,11 +14,11 @@ public class Playlist {
     private boolean estPrive;
     User createur;
 
-    public Playlist(String nom, User createur) {
+    public Playlist(String nom, User createur, Boolean estPrive) {
         this.lesMedias = new ArrayList<>();
         this.nom = nom;
         this.dateCreation = new Date();
-        this.estPrive = false;
+        this.estPrive = estPrive;
         this.createur = createur;
     }
 
@@ -55,6 +55,10 @@ public class Playlist {
             }
         }
         System.out.println("===============================\n");
+    }
+
+    public void tooglePrive(){
+        this.estPrive = !this.estPrive;
     }
 
     public List<Media> getLesMedias() {

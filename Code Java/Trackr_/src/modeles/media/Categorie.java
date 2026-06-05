@@ -1,10 +1,24 @@
 package modeles.media;
 
 public enum Categorie {
-    SF,
-    HORREUR,
+    ACTION,
+    ANIMATION,
     AUTEUR,
-    ROMANCE
-
-    //toujours mettre les Enums en UpperCase
+    AVENTURE,
+    BIOPIC,
+    COMEDIE,
+    DOCUMENTAIRE,
+    DRAME,
+    FAMILIAL,
+    FANTASTIQUE,
+    GUERRE,
+    HISTORIQUE,
+    HORREUR,
+    MUSICAL,
+    MYSTERE,
+    POLICIER,
+    ROMANCE,
+    SF,
+    THRILLER,
+    WESTERN
 }
