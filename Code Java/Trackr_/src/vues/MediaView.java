@@ -1,9 +1,11 @@
 package vues;
 
+import main.ApplicationMedias;
 import modeles.media.Media;
 import modeles.media.Film;
 import modeles.media.Serie;
 import modeles.media.Episode; // Assure-toi que l'import est correct selon ton architecture
+import modeles.user.User;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -70,8 +72,34 @@ public class MediaView extends JPanel {
 
         JPanel circleButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         circleButtonsPanel.setOpaque(false);
-        JButton btnHeart = createCircleButton("Like");
-        JButton btnCheck = createCircleButton("Vu");
+
+        JButton btnHeart = createCircleButton("❤");
+        JButton btnCheck = createCircleButton("\uD83D\uDC4D");
+
+        User currentUser = ApplicationMedias.getFactoryMedia().getUserLogged();
+
+        boolean isAlreadyLiked = currentUser.getLike().getLesMedias().contains(media);
+        btnHeart.setBackground(isAlreadyLiked ? Color.RED : COLOR_TEXT_LIGHT);
+
+        boolean isAlreadyVu = currentUser.getVu().getLesMedias().contains(media);
+        btnCheck.setBackground(isAlreadyVu ? COLOR_ACCENT_GREEN : COLOR_TEXT_LIGHT);
+
+        btnHeart.addActionListener(e -> {
+            currentUser.toggleCoupDeCoeur(media);
+            boolean isLiked = currentUser.getLike().getLesMedias().contains(media);
+            btnHeart.setBackground(isLiked ? Color.RED : COLOR_TEXT_LIGHT);
+            btnHeart.repaint();
+        });
+
+        btnCheck.addActionListener(e -> {
+            currentUser.toggleMediaVu(media);
+            boolean isVu = currentUser.getVu().getLesMedias().contains(media);
+            btnCheck.setBackground(isVu ? COLOR_ACCENT_GREEN : COLOR_TEXT_LIGHT);
+            btnCheck.repaint();
+        });
+        circleButtonsPanel.add(btnHeart);
+        circleButtonsPanel.add(btnCheck);
+
         circleButtonsPanel.add(btnHeart);
         circleButtonsPanel.add(btnCheck);
         titleHeaderPanel.add(circleButtonsPanel, BorderLayout.EAST);
@@ -287,20 +315,33 @@ public class MediaView extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
+                // Amélioration de la qualité du rendu
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(COLOR_TEXT_LIGHT);
+                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+                // Dessin du cercle AVEC LA COULEUR D'ARRIÈRE-PLAN DYNAMIQUE
+                g2.setColor(getBackground());
                 g2.fillOval(0, 0, getWidth() - 1, getHeight() - 1);
                 g2.dispose();
+
+                // Dessin du texte/emoji par-dessus
                 super.paintComponent(g);
             }
         };
-        button.setFont(new Font("SansSerif", Font.BOLD, 16));
-        button.setForeground(COLOR_BACKGROUND_DARK);
-        button.setPreferredSize(new Dimension(36, 36));
+        button.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 22));
+        button.setForeground(COLOR_BACKGROUND_DARK); // La couleur de l'émoji (souvent noir/sombre)
+        button.setBackground(COLOR_TEXT_LIGHT); // Couleur de base du cercle
+        button.setPreferredSize(new Dimension(50, 50));
+
+        button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        button.setHorizontalAlignment(SwingConstants.CENTER);
+        button.setVerticalAlignment(SwingConstants.CENTER);
+
         button.setContentAreaFilled(false);
         button.setBorderPainted(false);
         button.setFocusPainted(false);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         return button;
     }
 }

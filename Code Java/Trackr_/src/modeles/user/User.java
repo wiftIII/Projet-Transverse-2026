@@ -40,6 +40,26 @@ public class User {
         this.like = like;
     }
 
+    public void toggleCoupDeCoeur(Media media) {
+        if (this.like.getLesMedias().contains(media)) {
+            this.like.retirerMedia(media);
+            System.out.println("==> " + media.getTitre() + " retiré des coups de coeur.");
+        } else {
+            this.like.ajouterMedia(media);
+            System.out.println("==> " + media.getTitre() + " ajouté aux coups de coeur.");
+        }
+    }
+
+    public void toggleMediaVu(Media media) {
+        if (this.vu.getLesMedias().contains(media)) {
+            this.vu.retirerMedia(media);
+            System.out.println("==> " + media.getTitre() + " retiré des médias vus.");
+        } else {
+            this.vu.ajouterMedia(media);
+            System.out.println("==> " + media.getTitre() + " ajouté aux médias vus.");
+        }
+    }
+
     public void follow(User cible) {
         if (cible != null && cible != this && !this.suivi.contains(cible)) {
             this.suivi.add(cible);
