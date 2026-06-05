@@ -4,6 +4,7 @@ import modeles.media.Episode;
 import modeles.media.Serie;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class Utils {
@@ -90,6 +91,20 @@ public class Utils {
 
         return label;
     }
+
+    public static JLabel createBadge(String text) {
+        JLabel badge = new JLabel(" @" + text + "  ");
+        badge.setFont(new Font("Arial", Font.PLAIN, 14));
+        badge.setForeground(COLOR_TEXT_LIGHT);
+        badge.setOpaque(true);
+        badge.setBackground(COLOR_CARD_BACKGROUND);
+        badge.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(60, 60, 60), 1),
+                new EmptyBorder(5, 5, 5, 5)
+        ));
+        return badge;
+    }
+
 
     public static void genererEpisodesPourSerie(Serie serie, String dureeMoyenne, int limiteEpisodes) {
         Episode episodePrecedent = null;

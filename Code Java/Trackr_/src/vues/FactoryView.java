@@ -1,19 +1,26 @@
 package vues;
 
-
 import controleurs.*;
 import main.ApplicationMedias;
+import modeles.media.Media;
+import modeles.user.Playlist;
+import utils.Utils;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 import static utils.Utils.*;
 
 public class FactoryView extends JPanel {
-
 
     private JButton btnAccueil;
     private JButton btnProfil;
@@ -23,7 +30,6 @@ public class FactoryView extends JPanel {
     private JButton btnDebugFilm;
 
     private JButton btnSwitchProfile;
-
     private JButton btnParametres;
 
     private JTextField searchField;
@@ -32,9 +38,7 @@ public class FactoryView extends JPanel {
     private JScrollPane contentScrollPane;
     private JPanel contentContainer;
 
-
     ApplicationMedias factoryMedia;
-
 
     public FactoryView(ApplicationMedias factoryMedia, Boolean sideBar) {
         this.setLayout(new BorderLayout());
@@ -56,7 +60,6 @@ public class FactoryView extends JPanel {
         sidebarPanel.add(appNameLabel);
         sidebarPanel.add(Box.createRigidArea(new Dimension(0, 40)));
 
-
         sidebarPanel.add(createSectionHeader("MENU"));
 
         btnAccueil = createSidebarButton("Accueil");
@@ -66,18 +69,13 @@ public class FactoryView extends JPanel {
         btnMesListes = createSidebarButton("Mes Listes");
         btnDebugFilm = createSidebarButton("debugButton");
 
-
         sidebarPanel.add(btnAccueil);
         sidebarPanel.add(btnProfil);
         sidebarPanel.add(btnCoupsDeCoeur);
         sidebarPanel.add(btnFilmVu);
         sidebarPanel.add(btnMesListes);
-        sidebarPanel.add(btnDebugFilm);
-
 
         sidebarPanel.add(Box.createRigidArea(new Dimension(0, 25)));
-
-
         sidebarPanel.add(Box.createVerticalGlue());
 
         btnSwitchProfile = createSidebarButton("Switch Profile");
@@ -115,7 +113,6 @@ public class FactoryView extends JPanel {
         searchPanel.add(searchField, BorderLayout.CENTER);
         centralContentPanel.add(searchPanel, BorderLayout.NORTH);
 
-
         contentContainer = new JPanel();
         contentContainer.setLayout(new BoxLayout(contentContainer, BoxLayout.Y_AXIS));
         contentContainer.setBackground(COLOR_BACKGROUND_DARK);
@@ -126,7 +123,13 @@ public class FactoryView extends JPanel {
         contentScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         contentScrollPane.setBackground(COLOR_BACKGROUND_DARK);
         contentScrollPane.getViewport().setBackground(COLOR_BACKGROUND_DARK);
+
         centralContentPanel.add(contentScrollPane, BorderLayout.CENTER);
+
+        // --- CORRECTION 1 : On ajoute les sections dans le contentContainer et pas centralContentPanel
+        contentContainer.add(createMesCoupDeCoeurPanel("Mes listes de films"));
+        contentContainer.add(createMesSuivis("Listes que tu suis"));
+        contentContainer.add(createMediasConseille("Medias Conseillé"));
 
         FactoryController.openViewUser(getBtnProfil(), centralContentPanel);
         FactoryController.openViewFactory(getBtnAccueil(), centralContentPanel);
@@ -145,8 +148,256 @@ public class FactoryView extends JPanel {
         this.add(centralContentPanel, BorderLayout.CENTER);
     }
 
+    private JPanel createMediasConseille(String titreSection) {
+        JPanel sectionPanel = new JPanel();
+        sectionPanel.setLayout(new BoxLayout(sectionPanel, BoxLayout.Y_AXIS));
+        sectionPanel.setBackground(COLOR_BACKGROUND_DARK);
+        sectionPanel.setBorder(new EmptyBorder(20, 30, 30, 30));
+
+        // --- 1. L'en-tête (Titre + Bouton Rafraîchir) ---
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.X_AXIS));
+        headerPanel.setBackground(COLOR_BACKGROUND_DARK);
+        headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel titreLabel = new JLabel(titreSection);
+        titreLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titreLabel.setForeground(COLOR_TEXT_LIGHT);
+
+        JButton refreshButton = new JButton("🔄 Rafraîchir");
+        refreshButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        refreshButton.setForeground(COLOR_TEXT_LIGHT);
+        refreshButton.setBackground(COLOR_CARD_BACKGROUND); // Ou une autre couleur de ton choix
+        refreshButton.setFocusPainted(false);
+        refreshButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        headerPanel.add(titreLabel);
+        headerPanel.add(Box.createRigidArea(new Dimension(20, 0))); // Espace horizontal entre le titre et le bouton
+        headerPanel.add(refreshButton);
+
+        sectionPanel.add(headerPanel);
+        sectionPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Espace vertical avant la liste
+
+        // --- 2. Le conteneur des médias ---
+        JPanel listsdesplaylistPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
+        listsdesplaylistPanel.setBackground(COLOR_BACKGROUND_DARK);
+        listsdesplaylistPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // --- 3. La logique de remplissage (Encapsulée pour être réutilisée) ---
+        Runnable refreshAction = () -> {
+            // On vide le panneau avant de remettre de nouveaux éléments
+            listsdesplaylistPanel.removeAll();
+
+            List<Media> tousLesMedias = ApplicationMedias.getFactoryMedia().getMediaEnVrac();
+            int totalMedias = tousLesMedias.size();
+
+            if (totalMedias > 0) {
+                Random random = new Random();
+                for (int i = 0; i < 10; i++) {
+                    int rint = random.nextInt(totalMedias);
+                    Media mediaAleatoire = tousLesMedias.get(rint);
+                    JPanel mediaCard = createMediaItem(mediaAleatoire);
+                    listsdesplaylistPanel.add(mediaCard);
+                }
+            }
+
+            // On force Swing à recalculer l'affichage et à redessiner l'écran
+            listsdesplaylistPanel.revalidate();
+            listsdesplaylistPanel.repaint();
+        };
+
+        // --- 4. Exécution ---
+        // On exécute l'action une première fois pour le chargement initial
+        refreshAction.run();
+
+        // On lie cette même action au clic du bouton
+        refreshButton.addActionListener(e -> refreshAction.run());
+
+        sectionPanel.add(listsdesplaylistPanel);
+
+        return sectionPanel;
+    }
 
 
+    private JPanel createMesSuivis(String titreSection) {
+        JPanel sectionPanel = new JPanel();
+        sectionPanel.setLayout(new BoxLayout(sectionPanel, BoxLayout.Y_AXIS));
+        sectionPanel.setBackground(COLOR_BACKGROUND_DARK);
+        sectionPanel.setBorder(new EmptyBorder(20, 30, 30, 30));
+
+        JLabel titreLabel = new JLabel(titreSection);
+        titreLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titreLabel.setForeground(COLOR_TEXT_LIGHT);
+        titreLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        sectionPanel.add(titreLabel);
+        sectionPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        JPanel listsdesplaylistPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
+        listsdesplaylistPanel.setBackground(COLOR_BACKGROUND_DARK);
+        listsdesplaylistPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        ApplicationMedias.getFactoryMedia().getUserLogged().getSuivi().forEach(suivi -> {
+
+            // 1. Création d'un panel conteneur (wrapper) pour empiler la carte et le badge
+            JPanel wrapperPanel = new JPanel();
+            wrapperPanel.setLayout(new BoxLayout(wrapperPanel, BoxLayout.Y_AXIS));
+            wrapperPanel.setBackground(COLOR_BACKGROUND_DARK);
+
+            // 2. Récupération de la carte existante
+            JPanel playlistCard = createPlaylistItem(suivi.getMesPlaylists().get(new Random().nextInt(0, ApplicationMedias.getFactoryMedia().getUserLogged().getMesPlaylists().size() - 1)));
+
+            // 3. Ajout de l'encadré vert (bordure de 2 pixels d'épaisseur)
+            // 3. Ajout de l'encadré vert avec un espacement intérieur
+            Border bordureVerte = BorderFactory.createLineBorder(COLOR_ACCENT_GREEN_LIGHT, 2);
+            Border espaceInterieur = BorderFactory.createEmptyBorder(10, 10, 10, 10); // Haut, Gauche, Bas, Droite (en pixels)
+
+            playlistCard.setBorder(BorderFactory.createCompoundBorder(bordureVerte, espaceInterieur));
+            playlistCard.setAlignmentX(Component.CENTER_ALIGNMENT);
+            playlistCard.setAlignmentX(Component.CENTER_ALIGNMENT); // Centrage dans le wrapper
+
+            // 4. Création du badge (remplace "@pseudo" par "@" + suivi.getPseudo() si besoin)
+            Component badge = Utils.createBadge(suivi.getPseudo());
+            // On s'assure de pouvoir modifier l'alignement selon le type de retour de Utils
+            if (badge instanceof JComponent) {
+                ((JComponent) badge).setAlignmentX(Component.CENTER_ALIGNMENT);
+            }
+
+            // 5. Assemblage dans le wrapper
+            wrapperPanel.add(playlistCard);
+            wrapperPanel.add(Box.createRigidArea(new Dimension(0, 8))); // Petit espace entre la carte et le badge
+            wrapperPanel.add(badge);
+
+            // 6. Ajout du wrapper au panel principal
+            listsdesplaylistPanel.add(wrapperPanel);
+        });
+
+        sectionPanel.add(listsdesplaylistPanel);
+
+        return sectionPanel;
+    }
+
+    private JPanel createMesCoupDeCoeurPanel(String titreSection) {
+        JPanel sectionPanel = new JPanel();
+        sectionPanel.setLayout(new BoxLayout(sectionPanel, BoxLayout.Y_AXIS));
+        sectionPanel.setBackground(COLOR_BACKGROUND_DARK);
+        sectionPanel.setBorder(new EmptyBorder(20, 30, 30, 30));
+
+        JLabel titreLabel = new JLabel(titreSection);
+        titreLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titreLabel.setForeground(COLOR_TEXT_LIGHT);
+        titreLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        sectionPanel.add(titreLabel);
+        sectionPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        JPanel listsdesplaylistPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
+        listsdesplaylistPanel.setBackground(COLOR_BACKGROUND_DARK);
+        listsdesplaylistPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        ApplicationMedias.getFactoryMedia().getUserLogged().getMesPlaylists().forEach(me -> {
+            JPanel playlistCard = createPlaylistItem(me);
+            listsdesplaylistPanel.add(playlistCard);
+        });
+
+        sectionPanel.add(listsdesplaylistPanel);
+
+        return sectionPanel;
+    }
+
+    // --- CORRECTION 3 : Suppression du ", JPanel panel" inutile dans la signature
+    private JPanel createPlaylistItem(Playlist playlist) {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(COLOR_BACKGROUND_DARK);
+
+        Dimension cardSize = new Dimension(200, 350);
+        card.setPreferredSize(cardSize);
+        card.setMaximumSize(cardSize);
+        card.setMinimumSize(cardSize);
+
+        JButton imageButton = new JButton();
+        imageButton.setBorderPainted(false);
+        imageButton.setFocusPainted(false);
+        imageButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        imageButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        Dimension imageSize = new Dimension(200, 200);
+        imageButton.setPreferredSize(imageSize);
+        imageButton.setMaximumSize(imageSize);
+        imageButton.setMinimumSize(imageSize);
+
+        List<Media> medias = playlist.getLesMedias();
+        int mediaCount = (medias != null) ? medias.size() : 0;
+        boolean isImageSet = false;
+
+        if (mediaCount >= 4) {
+            BufferedImage composite = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = composite.createGraphics();
+
+            for (int i = 0; i < 4; i++) {
+                String chemin = "src/images/" + medias.get(i).getTitre() + ".jpg";
+                File file = new File(chemin);
+
+                int x = (i % 2) * 100;
+                int y = (i / 2) * 100;
+
+                if (file.exists()) {
+                    Image img = new ImageIcon(chemin).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+                    new ImageIcon(img);
+                    g2d.drawImage(img, x, y, null);
+                } else {
+                    g2d.setColor(Color.DARK_GRAY);
+                    g2d.fillRect(x, y, 100, 100);
+                }
+            }
+            g2d.dispose();
+            imageButton.setIcon(new ImageIcon(composite));
+            imageButton.setContentAreaFilled(false);
+            isImageSet = true;
+
+        } else if (mediaCount > 0) {
+            String chemin = "src/images/" + medias.get(0).getTitre() + ".jpg";
+            File file = new File(chemin);
+            if (file.exists()) {
+                Image img = new ImageIcon(chemin).getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+                imageButton.setIcon(new ImageIcon(img));
+                imageButton.setContentAreaFilled(false);
+                isImageSet = true;
+            }
+        }
+
+        if (!isImageSet) {
+            imageButton.setText(";)");
+            imageButton.setFont(new Font("Arial", Font.PLAIN, 50));
+            imageButton.setBackground(COLOR_CARD_BACKGROUND);
+            imageButton.setForeground(COLOR_TEXT_DIM);
+            imageButton.setOpaque(true);
+            imageButton.setContentAreaFilled(true);
+        }
+
+        PlaylistsController.openPlaylistView(imageButton, centralContentPanel, playlist);
+
+        JLabel titleLabel = new JLabel(playlist.getNom());
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setForeground(COLOR_TEXT_LIGHT);
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        String texteElement = (mediaCount <= 1) ? " élément" : " éléments";
+        JLabel countLabel = new JLabel(mediaCount + texteElement);
+        countLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        countLabel.setForeground(COLOR_TEXT_DIM);
+        countLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        card.add(imageButton);
+        card.add(Box.createRigidArea(new Dimension(0, 8)));
+        card.add(titleLabel);
+        card.add(Box.createRigidArea(new Dimension(0, 2)));
+        card.add(countLabel);
+        card.add(Box.createVerticalGlue());
+
+        return card;
+    }
 
     private JLabel createSectionHeader(String text) {
         JLabel label = new JLabel(text);
@@ -157,6 +408,69 @@ public class FactoryView extends JPanel {
         return label;
     }
 
+
+    private JPanel createMediaItem(Media media) {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(COLOR_BACKGROUND_DARK);
+
+        // On augmente légèrement la hauteur pour accommoder le nouveau bouton
+        card.setPreferredSize(new Dimension(200, 500));
+
+        // --- 1. Le Bouton Image (qui remplace le JLabel et le texte) ---
+        String cheminImage = "src/images/" + media.getTitre() +  ".jpg";
+        JButton imageButton = new JButton();
+
+        try {
+            ImageIcon originalIcon = new ImageIcon(cheminImage);
+            Image scaledImage = originalIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+            imageButton.setIcon(new ImageIcon(scaledImage));
+
+            imageButton.setBorderPainted(false);
+            imageButton.setFocusPainted(false);
+            imageButton.setContentAreaFilled(false);
+            imageButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        } catch (Exception e) {
+            imageButton.setText(";)");
+            imageButton.setFont(new Font("Arial", Font.PLAIN, 50));
+            imageButton.setBackground(COLOR_CARD_BACKGROUND);
+            imageButton.setForeground(COLOR_TEXT_DIM);
+            imageButton.setOpaque(true);
+        }
+
+        Dimension imageSize = new Dimension(200, 200);
+        imageButton.setPreferredSize(imageSize);
+        imageButton.setMaximumSize(imageSize);
+        imageButton.setMinimumSize(imageSize);
+        imageButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        PlaylistController.openMediaView(imageButton, this, media);
+
+        // --- 2. Le Titre ---
+        JLabel titleLabel = new JLabel(media.getTitre());
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setForeground(COLOR_TEXT_LIGHT);
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // --- 3. Le nombre d'éléments (La note) ---
+        int noteMedia = (int) media.getScoreMoyen();
+        String texteElement = "/5";
+        JLabel noteLabel = new JLabel(noteMedia + texteElement);
+        noteLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        noteLabel.setForeground(COLOR_TEXT_DIM);
+        noteLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // --- Assemblage de la carte ---
+        card.add(imageButton);
+        card.add(Box.createRigidArea(new Dimension(0, 12)));
+        card.add(titleLabel);
+        card.add(Box.createRigidArea(new Dimension(0, 5)));
+        card.add(noteLabel);
+        card.add(Box.createRigidArea(new Dimension(0, 8))); // Espace avant le bouton
+
+        return card;
+    }
 
     private JButton createSidebarButton(String text) {
         JButton button = new JButton(text);
@@ -177,22 +491,14 @@ public class FactoryView extends JPanel {
         return button;
     }
 
-
-    public JButton getBtnDebugFilm() {
-        return btnDebugFilm;
-    }
-
+    public JButton getBtnDebugFilm() { return btnDebugFilm; }
     public JButton getBtnAccueil() { return btnAccueil; }
     public JButton getBtnProfil() { return btnProfil; }
     public JButton getBtnCoupsDeCoeur() { return btnCoupsDeCoeur; }
     public JButton getBtnFilmVu() {return btnFilmVu;}
     public JButton getBtnMesListes() {return btnMesListes;}
-
     public JButton getBtnSwitchProfile() {return btnSwitchProfile;}
-
     public JButton getBtnParametres() { return btnParametres; }
-
     public JTextField getSearchField() { return searchField; }
-
     public JPanel getCentralContentPanel() { return centralContentPanel; }
 }

@@ -1,6 +1,7 @@
 package vues;
 
 import controleurs.PlaylistsController;
+import modeles.media.Media;
 import modeles.user.Playlist;
 import modeles.user.User;
 import utils.WrapLayout;
@@ -8,6 +9,9 @@ import utils.WrapLayout;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.List;
 
 import static utils.Utils.*;
 
@@ -109,34 +113,80 @@ public class PlaylistsView extends JPanel{
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(COLOR_BACKGROUND_DARK);
 
-        // Fixer la taille maximum aide le WrapLayout/FlowLayout à ne pas étirer la carte
+        // Fixer la taille maximum
         Dimension cardSize = new Dimension(200, 350);
         card.setPreferredSize(cardSize);
         card.setMaximumSize(cardSize);
         card.setMinimumSize(cardSize);
 
-        // --- 1. L'image (simulée par un JButton) ---
-        JButton imagePlaceholder = new JButton(";)");
-        imagePlaceholder.setFont(new Font("Arial", Font.PLAIN, 50));
-        imagePlaceholder.setBackground(COLOR_CARD_BACKGROUND);
-        imagePlaceholder.setForeground(COLOR_TEXT_DIM);
-        imagePlaceholder.setOpaque(true);
+        // --- 1. L'image (Mosaïque façon Spotify) ---
+        JButton imageButton = new JButton();
+        imageButton.setBorderPainted(false);
+        imageButton.setFocusPainted(false);
+        imageButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        imageButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // CORRECTIONS VISUELLES DU BOUTON
-        imagePlaceholder.setBorderPainted(false); // Enlève la bordure disgracieuse du bouton
-        imagePlaceholder.setFocusPainted(false); // Enlève le contour de sélection au clic
-        imagePlaceholder.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Curseur pointeur au survol
-
-        // CORRECTION D'ALIGNEMENT CRITIQUE
-        imagePlaceholder.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        PlaylistsController.openPlaylistView(imagePlaceholder, this, playlist);
-
-        // Tailles fixes pour le bouton
         Dimension imageSize = new Dimension(200, 200);
-        imagePlaceholder.setPreferredSize(imageSize);
-        imagePlaceholder.setMaximumSize(imageSize);
-        imagePlaceholder.setMinimumSize(imageSize);
+        imageButton.setPreferredSize(imageSize);
+        imageButton.setMaximumSize(imageSize);
+        imageButton.setMinimumSize(imageSize);
+
+        // Récupération des médias
+        List<Media> medias = playlist.getLesMedias();
+        int mediaCount = (medias != null) ? medias.size() : 0;
+        boolean isImageSet = false;
+
+        if (mediaCount >= 4) {
+            // --- CAS 1 : 4 médias ou plus -> Mosaïque 2x2 ---
+            BufferedImage composite = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = composite.createGraphics();
+
+            for (int i = 0; i < 4; i++) {
+                String chemin = "src/images/" + medias.get(i).getTitre() + ".jpg";
+                File file = new File(chemin);
+
+                int x = (i % 2) * 100; // Colonne 0 ou 1
+                int y = (i / 2) * 100; // Ligne 0 ou 1
+
+                if (file.exists()) {
+                    Image img = new ImageIcon(chemin).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+                    new ImageIcon(img); // Force le chargement de l'image en mémoire
+                    g2d.drawImage(img, x, y, null);
+                } else {
+                    // Si l'image d'un des médias manque, on met un fond gris foncé
+                    g2d.setColor(Color.DARK_GRAY);
+                    g2d.fillRect(x, y, 100, 100);
+                }
+            }
+            g2d.dispose(); // Libère les ressources graphiques
+            imageButton.setIcon(new ImageIcon(composite));
+            imageButton.setContentAreaFilled(false);
+            isImageSet = true;
+
+        } else if (mediaCount > 0) {
+            // --- CAS 2 : Entre 1 et 3 médias -> On prend juste la première image ---
+            String chemin = "src/images/" + medias.get(0).getTitre() + ".jpg";
+            File file = new File(chemin);
+            if (file.exists()) {
+                Image img = new ImageIcon(chemin).getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+                imageButton.setIcon(new ImageIcon(img));
+                imageButton.setContentAreaFilled(false);
+                isImageSet = true;
+            }
+        }
+
+        // --- CAS 3 : Fallback (Playlist vide ou images introuvables) ---
+        if (!isImageSet) {
+            imageButton.setText(";)");
+            imageButton.setFont(new Font("Arial", Font.PLAIN, 50));
+            imageButton.setBackground(COLOR_CARD_BACKGROUND);
+            imageButton.setForeground(COLOR_TEXT_DIM);
+            imageButton.setOpaque(true);
+            imageButton.setContentAreaFilled(true); // Requis pour afficher la couleur de fond
+        }
+
+        // Ajout du listener
+        PlaylistsController.openPlaylistView(imageButton, this, playlist);
 
         // --- 2. Le Titre ---
         JLabel titleLabel = new JLabel(playlist.getNom());
@@ -145,7 +195,6 @@ public class PlaylistsView extends JPanel{
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // --- 3. Le nombre d'éléments ---
-        int mediaCount = (playlist.getLesMedias() != null) ? playlist.getLesMedias().size() : 0;
         String texteElement = (mediaCount <= 1) ? " élément" : " éléments";
         JLabel countLabel = new JLabel(mediaCount + texteElement);
         countLabel.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -153,18 +202,16 @@ public class PlaylistsView extends JPanel{
         countLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // --- Assemblage de la carte ---
-        card.add(imagePlaceholder);
+        card.add(imageButton);
         card.add(Box.createRigidArea(new Dimension(0, 8))); // Espace entre l'image et le titre
         card.add(titleLabel);
         card.add(Box.createRigidArea(new Dimension(0, 2))); // Espace minimal entre les deux textes
         card.add(countLabel);
-
-        // LA CORRECTION EST ICI :
-        // Ce "glue" absorbe tout l'espace vide restant en bas de la carte
-        // et empêche le BoxLayout d'écarter tes lignes de texte.
-        card.add(Box.createVerticalGlue());
+        card.add(Box.createVerticalGlue()); // Absorbe l'espace restant
 
         return card;
     }
+
+
 
 }

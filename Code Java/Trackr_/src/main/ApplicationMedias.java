@@ -100,7 +100,7 @@ public class ApplicationMedias {
 
         // === GROUPE 4 : Action & Thriller ===
         Film f31 = new Film(Categorie.ACTION, "Die Hard", new Date(88, 8, 21), "John McTiernan", null, null, "2h12");
-        Film f32 = new Film(Categorie.ACTION, "Mad Max: Fury Road", new Date(115, 4, 14), "George Miller", null, null, "2h00");
+        Film f32 = new Film(Categorie.ACTION, "Mad Max- Fury Road", new Date(115, 4, 14), "George Miller", null, null, "2h00");
         Film f33 = new Film(Categorie.ACTION, "John Wick", new Date(114, 9, 24), "Chad Stahelski", null, null, "1h41");
         Film f34 = new Film(Categorie.ACTION, "The Dark Knight", new Date(108, 7, 13), "Christopher Nolan", null, null, "2h32");
         Film f35 = new Film(Categorie.THRILLER, "Fight Club", new Date(99, 10, 10), "David Fincher", null, null, "2h19");

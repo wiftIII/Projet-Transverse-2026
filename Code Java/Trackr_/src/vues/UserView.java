@@ -5,6 +5,7 @@ import modeles.media.Media;
 import modeles.user.Avis;
 import modeles.user.Playlist;
 import modeles.user.User;
+import utils.Utils;
 import utils.WrapLayout;
 
 import javax.swing.*;
@@ -171,7 +172,7 @@ public class UserView extends JPanel {
         // Changement ici : on itère sur les followers (abonnés) au lieu des suivis
         this.user.getFollower().forEach(user1 -> {
             // On récupère le badge (qui peut être un JButton, un JPanel, ou un JLabel)
-            Component badge = createBadge(user1.getPseudo());
+            Component badge = Utils.createBadge(user1.getPseudo());
 
             // Si votre badge est un JButton, utilisez un ActionListener :
             if (badge instanceof JButton) {
@@ -426,17 +427,4 @@ public class UserView extends JPanel {
         return panel;
     }
 
-    // Helper : Formate les petits encarts d'abonnements
-    private JLabel createBadge(String text) {
-        JLabel badge = new JLabel(" @" + text + "  ");
-        badge.setFont(new Font("Arial", Font.PLAIN, 14));
-        badge.setForeground(COLOR_TEXT_LIGHT);
-        badge.setOpaque(true);
-        badge.setBackground(COLOR_CARD_BACKGROUND);
-        badge.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(60, 60, 60), 1),
-                new EmptyBorder(5, 5, 5, 5)
-        ));
-        return badge;
-    }
 }
