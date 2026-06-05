@@ -189,6 +189,7 @@ public class MediaView extends JPanel {
 
         scoreBadge.add(lblScoreTitle);
         scoreBadge.add(Box.createRigidArea(new Dimension(0, 2)));
+
         scoreBadge.add(lblScoreValue);
         detailsPanel.add(scoreBadge);
 
@@ -286,34 +287,28 @@ public class MediaView extends JPanel {
         btnSaveAvis.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
         btnSaveAvis.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // ACTION D'ENREGISTREMENT DE L'AVIS
         btnSaveAvis.addActionListener(e -> {
-            // 1. Vérifier si une note a été donnée
             if (noteSelectionnee[0] == 0) {
                 JOptionPane.showMessageDialog(this, "Veuillez sélectionner une note avec les étoiles.", "Note manquante", JOptionPane.WARNING_MESSAGE);
-                return; // On arrête là si pas de note
+                return;
             }
 
-            // 2. Récupérer le texte
             String commentaire = txtCritique.getText();
             if (commentaire.equals("Écrivez votre critique ici...")) {
-                commentaire = ""; // Si l'utilisateur n'a rien écrit, on garde une chaîne vide
+                commentaire = "";
             }
 
-            // 3. Récupérer l'utilisateur courant et créer l'Avis
-            // Assurez-vous que l'accès à getUserLogged() fonctionne comme précédemment
             modeles.user.Avis nouvelAvis = new modeles.user.Avis(currentUser, media, new Date(), commentaire, noteSelectionnee[0]);
 
-            // 4. Publier (ajoute l'avis au média et à l'utilisateur)
             nouvelAvis.publier();
 
-            // 5. Retour visuel pour l'utilisateur
             JOptionPane.showMessageDialog(this, "Votre avis a bien été enregistré !", "Succès", JOptionPane.INFORMATION_MESSAGE);
 
-            // Optionnel : Désactiver le bouton pour éviter les clics multiples
             btnSaveAvis.setText("Avis enregistré ✓");
             btnSaveAvis.setEnabled(false);
             txtCritique.setEnabled(false);
+
+            this.setVisible(false);
         });
 
         JButton btnAddList = new JButton("Ajouter à une liste");

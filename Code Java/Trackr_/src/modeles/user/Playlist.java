@@ -14,6 +14,7 @@ public class Playlist {
     private boolean estPrive;
     User createur;
 
+
     public Playlist(String nom, User createur) {
         this.lesMedias = new ArrayList<>();
         this.nom = nom;
