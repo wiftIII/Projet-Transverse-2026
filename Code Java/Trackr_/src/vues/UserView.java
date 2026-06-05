@@ -10,6 +10,8 @@ import utils.WrapLayout;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import static utils.Utils.*;
 
@@ -36,7 +38,11 @@ public class UserView extends JPanel {
         contentPanel.add(Box.createVerticalStrut(40));
 
         contentPanel.add(createSectionTitle("Mes Abonnements"));
-        contentPanel.add(createAbonnementsSection());
+        contentPanel.add(createAbonnementsSection(contentPanel));
+        contentPanel.add(Box.createVerticalStrut(40));
+
+        contentPanel.add(createSectionTitle("Mes Abonné"));
+        contentPanel.add(createAbonnesSection(contentPanel));
         contentPanel.add(Box.createVerticalStrut(40));
 
         // Section des avis
@@ -109,8 +115,8 @@ public class UserView extends JPanel {
         return headerPanel;
     }
 
-    // Affiche les badges des personnes suivies (avec le trick du wrap responsive)
-    private JPanel createAbonnementsSection() {
+
+    private JPanel createAbonnementsSection(JPanel mainContainer) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10)) {
             @Override
             public Dimension getMaximumSize() {
@@ -121,8 +127,73 @@ public class UserView extends JPanel {
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         this.user.getSuivi().forEach(user1 -> {
-            panel.add(createBadge(user1.getPseudo()));
+            // On récupère le badge (qui peut être un JButton, un JPanel, ou un JLabel)
+            Component badge = createBadge(user1.getPseudo());
+
+            // Si votre badge est un JButton, utilisez un ActionListener :
+            if (badge instanceof JButton) {
+                ((JButton) badge).addActionListener(e -> UserController.openViewUser(user1, mainContainer));
+            }
+            // Si votre badge est un JPanel ou JLabel, utilisez un MouseListener :
+            else {
+                badge.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        UserController.openViewUser(user1, mainContainer);
+                    }
+
+                    // Optionnel : Changer le curseur en petite main au survol pour indiquer que c'est cliquable
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        badge.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    }
+                });
+            }
+
+            panel.add(badge);
         });
+
+        return panel;
+    }
+
+    private JPanel createAbonnesSection(JPanel mainContainer) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10)) {
+            @Override
+            public Dimension getMaximumSize() {
+                return new Dimension(Integer.MAX_VALUE, getPreferredSize().height);
+            }
+        };
+        panel.setBackground(COLOR_BACKGROUND_DARK);
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Changement ici : on itère sur les followers (abonnés) au lieu des suivis
+        this.user.getFollower().forEach(user1 -> {
+            // On récupère le badge (qui peut être un JButton, un JPanel, ou un JLabel)
+            Component badge = createBadge(user1.getPseudo());
+
+            // Si votre badge est un JButton, utilisez un ActionListener :
+            if (badge instanceof JButton) {
+                ((JButton) badge).addActionListener(e -> UserController.openViewUser(user1, mainContainer));
+            }
+            // Si votre badge est un JPanel ou JLabel, utilisez un MouseListener :
+            else {
+                badge.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        UserController.openViewUser(user1, mainContainer);
+                    }
+
+                    // Optionnel : Changer le curseur en petite main au survol pour indiquer que c'est cliquable
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        badge.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    }
+                });
+            }
+
+            panel.add(badge);
+        });
+
         return panel;
     }
 
