@@ -5,6 +5,7 @@ import modeles.media.Media;
 import modeles.media.Film;
 import modeles.media.Serie;
 import modeles.media.Episode; // Assure-toi que l'import est correct selon ton architecture
+import modeles.user.Avis;
 import modeles.user.User;
 import utils.Utils;
 
@@ -121,6 +122,8 @@ public class MediaView extends JPanel {
             btnCheck.setBackground(isVu ? COLOR_ACCENT_GREEN : COLOR_TEXT_LIGHT);
             btnCheck.repaint();
         });
+
+
         circleButtonsPanel.add(btnHeart);
         circleButtonsPanel.add(btnCheck);
 
@@ -260,13 +263,13 @@ public class MediaView extends JPanel {
         txtCritique.setMaximumSize(new Dimension(550, 70));
         txtCritique.setPreferredSize(new Dimension(550, 70));
 
-        // Vider le texte par défaut au premier clic
+// Vider le texte par défaut au premier clic
         txtCritique.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 if (txtCritique.getText().equals("Écrivez votre critique ici...")) {
                     txtCritique.setText("");
-                    txtCritique.setForeground(COLOR_TEXT_LIGHT); // On met le texte en plus clair quand l'utilisateur écrit
+                    txtCritique.setForeground(COLOR_TEXT_LIGHT);
                 }
             }
         });
@@ -287,30 +290,6 @@ public class MediaView extends JPanel {
         btnSaveAvis.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
         btnSaveAvis.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        btnSaveAvis.addActionListener(e -> {
-            if (noteSelectionnee[0] == 0) {
-                JOptionPane.showMessageDialog(this, "Veuillez sélectionner une note avec les étoiles.", "Note manquante", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            String commentaire = txtCritique.getText();
-            if (commentaire.equals("Écrivez votre critique ici...")) {
-                commentaire = "";
-            }
-
-            modeles.user.Avis nouvelAvis = new modeles.user.Avis(currentUser, media, new Date(), commentaire, noteSelectionnee[0]);
-
-            nouvelAvis.publier();
-
-            JOptionPane.showMessageDialog(this, "Votre avis a bien été enregistré !", "Succès", JOptionPane.INFORMATION_MESSAGE);
-
-            btnSaveAvis.setText("Avis enregistré ✓");
-            btnSaveAvis.setEnabled(false);
-            txtCritique.setEnabled(false);
-
-            this.setVisible(false);
-        });
-
         JButton btnAddList = new JButton("Ajouter à une liste");
         btnAddList.setFont(new Font("SansSerif", Font.PLAIN, 14));
         btnAddList.setForeground(COLOR_TEXT_LIGHT);
@@ -329,9 +308,9 @@ public class MediaView extends JPanel {
         topSectionPanel.add(detailsPanel);
         contentPanel.add(topSectionPanel);
 
+        // --- SECTION ÉPISODES (SI SÉRIE) ---
         if (media instanceof Serie) {
             Serie laSerie = (Serie) media;
-
             contentPanel.add(Box.createRigidArea(new Dimension(0, 40)));
 
             JLabel lblEpisodesTitle = new JLabel("Épisodes");
@@ -352,7 +331,75 @@ public class MediaView extends JPanel {
             }
         }
 
-        // Intégration globale de la vue dans le ScrollPane
+        // --- SECTION DES AVIS ---
+        contentPanel.add(Box.createRigidArea(new Dimension(0, 40)));
+
+        JLabel lblAvisTitle = new JLabel("Avis des utilisateurs");
+        lblAvisTitle.setFont(new Font("SansSerif", Font.BOLD, 22));
+        lblAvisTitle.setForeground(COLOR_TEXT_LIGHT);
+        lblAvisTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        contentPanel.add(lblAvisTitle);
+
+        contentPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+
+        // Conteneur des avis (Modifié pour le rafraîchissement)
+        JPanel panelAvis = new JPanel();
+        panelAvis.setLayout(new BoxLayout(panelAvis, BoxLayout.Y_AXIS));
+        panelAvis.setOpaque(false);
+        panelAvis.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Lambda/Méthode interne pour charger/recharger les avis à l'écran
+        Runnable chargerAvis = () -> {
+            panelAvis.removeAll(); // On vide les anciennes cartes
+            media.getLesAvis().forEach(avis -> {
+                JPanel carte = createCarteCritique(avis);
+                carte.setAlignmentX(Component.LEFT_ALIGNMENT); // Alignement uniforme à gauche
+                panelAvis.add(carte);
+                panelAvis.add(Box.createRigidArea(new Dimension(0, 15)));
+            });
+            panelAvis.revalidate();
+            panelAvis.repaint();
+        };
+
+        // Premier chargement initial des avis au démarrage de la vue
+        chargerAvis.run();
+        contentPanel.add(panelAvis);
+
+        // Élastique tout en bas du contentPanel pour tout pousser vers le haut proprement
+        contentPanel.add(Box.createVerticalGlue());
+
+        // --- LOGIQUE DU BOUTON ENREGISTRER (Mise à jour en temps réel) ---
+        btnSaveAvis.addActionListener(e -> {
+            if (noteSelectionnee[0] == 0) {
+                JOptionPane.showMessageDialog(this, "Veuillez sélectionner une note avec les étoiles.", "Note manquante", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            String commentaire = txtCritique.getText();
+            if (commentaire.equals("Écrivez votre critique ici...")) {
+                commentaire = "";
+            }
+
+            // Création et publication de l'avis
+            modeles.user.Avis nouvelAvis = new modeles.user.Avis(currentUser, media, new Date(), commentaire, noteSelectionnee[0]);
+            nouvelAvis.publier();
+
+            JOptionPane.showMessageDialog(this, "Votre avis a bien été enregistré !", "Succès", JOptionPane.INFORMATION_MESSAGE);
+
+            // 1. RECHARGEMENT DYNAMIQUE : On reconstruit instantanément la liste des avis affichée
+            chargerAvis.run();
+
+            // 2. RESET DU FORMULAIRE
+            txtCritique.setText("Écrivez votre critique ici...");
+            txtCritique.setForeground(COLOR_TEXT_DIM);
+            noteSelectionnee[0] = 0;
+            for (int i = 0; i < starLabels.length; i++) {
+                starLabels[i].setText("☆");
+                starLabels[i].setForeground(COLOR_TEXT_DIM);
+            }
+        });
+
+        // Intégration globale dans le ScrollPane
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -386,6 +433,77 @@ public class MediaView extends JPanel {
 
         return row;
     }
+
+    private JPanel createCarteCritique(Avis avis) {
+        Media media = avis.getMediaAssocie();
+
+        // --- CONFIGURATION DE LA CARTE ---
+        JPanel card = new JPanel(new BorderLayout(0, 15));
+        card.setBackground(COLOR_CARD_BACKGROUND);
+        card.setBorder(new EmptyBorder(15, 15, 15, 15));
+
+        Dimension cardSize = new Dimension(380, 240); // Hauteur légèrement augmentée pour l'ajout d'info
+        card.setPreferredSize(cardSize);
+        card.setMinimumSize(cardSize);
+        card.setMaximumSize(cardSize);
+
+        // --- PARTIE HAUTE (Infos du média) ---
+        JPanel filmPanel = new JPanel();
+        filmPanel.setLayout(new BoxLayout(filmPanel, BoxLayout.Y_AXIS));
+        filmPanel.setBackground(COLOR_CARD_BACKGROUND);
+
+        JLabel titleLabel = new JLabel(media.getTitre().toUpperCase());
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setForeground(COLOR_ACCENT_GREEN);
+
+        JLabel directorLabel = new JLabel("De " + media.getRealisateur());
+        directorLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+        directorLabel.setForeground(COLOR_TEXT_DIM);
+
+        JLabel catLabel = new JLabel(media.getLaCategorie().toString());
+        catLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+        catLabel.setForeground(COLOR_TEXT_LIGHT);
+        catLabel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(COLOR_TEXT_DIM),
+                new EmptyBorder(2, 5, 2, 5)
+        ));
+
+        filmPanel.add(titleLabel);
+        filmPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        filmPanel.add(directorLabel);
+        filmPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        filmPanel.add(catLabel);
+
+        // --- PARTIE BASSE (Note, Créateur et Commentaire) ---
+        JPanel avisPanel = new JPanel(new BorderLayout(0, 8));
+        avisPanel.setBackground(COLOR_CARD_BACKGROUND);
+
+        // Formatage de la ligne d'info : Étoiles • Créateur • Date
+        String dateStr = avis.getDateDeCreation().toLocaleString().split(",")[0];
+        String etoiles = "★".repeat(avis.getNombreEtoiles()) + "☆".repeat(5 - avis.getNombreEtoiles());
+
+        JLabel infoAvisLabel = new JLabel(String.format("%s  •  Par %s  •  %s", etoiles, Utils.createBadge(avis.getCreateur().getPseudo()), dateStr));
+        infoAvisLabel.setFont(new Font("Dialog", Font.BOLD, 12));
+        infoAvisLabel.setForeground(new Color(255, 215, 0)); // Couleur Or pour les étoiles/infos
+
+        JTextArea commentArea = new JTextArea(avis.getCommentaire());
+        commentArea.setLineWrap(true);
+        commentArea.setWrapStyleWord(true);
+        commentArea.setEditable(false);
+        commentArea.setBackground(COLOR_CARD_BACKGROUND);
+        commentArea.setForeground(COLOR_TEXT_LIGHT);
+        commentArea.setFont(new Font("Arial", Font.PLAIN, 13));
+
+        avisPanel.add(infoAvisLabel, BorderLayout.NORTH);
+        avisPanel.add(commentArea, BorderLayout.CENTER);
+
+        // Assemblage final
+        card.add(filmPanel, BorderLayout.NORTH);
+        card.add(avisPanel, BorderLayout.CENTER);
+
+        return card;
+    }
+
 
     private JButton createCircleButton(String text) {
         JButton button = new JButton(text) {

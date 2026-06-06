@@ -95,6 +95,7 @@ public class ApplicationMedias {
         Film f26 = new Film(Categorie.AVENTURE, "Jurassic Park", new Date(93, 9, 20), "Steven Spielberg", null, null, "2h07");
         Film f27 = new Film(Categorie.AVENTURE, "Le Monde Perdu - Jurassic Park", new Date(97, 9, 22), "Steven Spielberg", f26, null, "2h09");
         Film f28 = new Film(Categorie.SF, "Retour vers le futur", new Date(85, 9, 23), "Robert Zemeckis", null, null, "1h56");
+
         Film f29 = new Film(Categorie.SF, "Retour vers le futur II", new Date(89, 10, 22), "Robert Zemeckis", f28, null, "1h48");
         Film f30 = new Film(Categorie.SF, "Retour vers le futur III", new Date(90, 4, 25), "Robert Zemeckis", f29, null, "1h58");
 
