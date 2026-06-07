@@ -67,13 +67,14 @@ public class UserView extends JPanel {
     }
 
     // Génère le haut du profil : Avatar, Pseudo et les 3 stats
+    // Génère le haut du profil : Avatar, Pseudo, bouton d'abonnement (si tiers) et les 3 stats
     private JPanel createHeaderSection(User user) {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(COLOR_BACKGROUND_DARK);
         headerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
         headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Partie gauche : Avatar + Texte
+        // Partie gauche : Avatar + Texte + Bouton
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
         infoPanel.setBackground(COLOR_BACKGROUND_DARK);
 
@@ -84,20 +85,97 @@ public class UserView extends JPanel {
         avatar.setBackground(COLOR_CARD_BACKGROUND);
         avatar.setPreferredSize(new Dimension(100, 100));
 
+        // Conteneur vertical pour aligner le pseudo, le bouton et la date d'inscription
         JPanel textInfoPanel = new JPanel();
         textInfoPanel.setLayout(new BoxLayout(textInfoPanel, BoxLayout.Y_AXIS));
         textInfoPanel.setBackground(COLOR_BACKGROUND_DARK);
 
+        // Ligne pour le Pseudo et le Bouton d'abonnement
+        JPanel nameAndFollowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+        nameAndFollowPanel.setBackground(COLOR_BACKGROUND_DARK);
+        nameAndFollowPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         JLabel nameLabel = new JLabel(user.getPseudo());
         nameLabel.setFont(new Font("Arial", Font.BOLD, 32));
         nameLabel.setForeground(COLOR_TEXT_LIGHT);
+        nameAndFollowPanel.add(nameLabel);
+
+        // --- GESTION DU BOUTON S'ABONNER / SE DÉSABONNER ---
+        User userLogged = main.FactoryMedia.getFactoryMedia().getUserLogged();
+
+        if (!user.equals(userLogged)) {
+            JButton btnFollow = new JButton();
+            btnFollow.setFont(new Font("Arial", Font.BOLD, 14));
+            btnFollow.setFocusPainted(false);
+            btnFollow.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btnFollow.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
+
+            // Vérification de l'état d'abonnement actuel
+            boolean estAbonne = userLogged.getSuivi().contains(user);
+
+            if (estAbonne) {
+                btnFollow.setText("Se désabonner");
+                btnFollow.setBackground(new Color(220, 53, 69)); // Rouge
+                btnFollow.setForeground(Color.WHITE);
+            } else {
+                btnFollow.setText("S'abonner");
+                btnFollow.setBackground(COLOR_ACCENT_GREEN); // Vert de l'app
+                btnFollow.setForeground(COLOR_BACKGROUND_DARK);
+            }
+
+            // Action au clic
+            btnFollow.addActionListener(e -> {
+                if (userLogged.getSuivi().contains(user)) {
+                    // Logique de désabonnement
+                    userLogged.getSuivi().remove(user);
+                    user.getFollower().remove(userLogged);
+                } else {
+                    // Logique d'abonnement
+                    userLogged.getSuivi().add(user);
+                    user.getFollower().add(userLogged);
+                }
+
+                // Rafraîchir entièrement la page pour mettre à jour les boutons, les compteurs et les listes de badges
+                view.removeAll();
+                // On ré-exécute le constructeur visuel de manière propre
+                JPanel contentPanel = new JPanel();
+                contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+                contentPanel.setBackground(COLOR_BACKGROUND_DARK);
+                contentPanel.setBorder(new EmptyBorder(30, 40, 40, 40));
+
+                contentPanel.add(createHeaderSection(user));
+                contentPanel.add(Box.createVerticalStrut(40));
+                contentPanel.add(createSectionTitle("Mes Abonnements"));
+                contentPanel.add(createAbonnementsSection(contentPanel));
+                contentPanel.add(Box.createVerticalStrut(40));
+                contentPanel.add(createSectionTitle("Mes Abonné"));
+                contentPanel.add(createAbonnesSection(contentPanel));
+                contentPanel.add(Box.createVerticalStrut(40));
+                contentPanel.add(createDernierAvis());
+                contentPanel.add(createSectionTitle("Mes Playlists"));
+                contentPanel.add(createPlaylistPerso());
+
+                JScrollPane scrollPane = new JScrollPane(contentPanel);
+                scrollPane.setBorder(BorderFactory.createEmptyBorder());
+                scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+                scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                scrollPane.getViewport().setBackground(COLOR_BACKGROUND_DARK);
+
+                view.add(scrollPane, BorderLayout.CENTER);
+                view.revalidate();
+                view.repaint();
+            });
+
+            nameAndFollowPanel.add(btnFollow);
+        }
 
         JLabel memberSince = new JLabel("Membre depuis 2025");
         memberSince.setFont(new Font("Arial", Font.PLAIN, 14));
         memberSince.setForeground(COLOR_TEXT_DIM);
+        memberSince.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        textInfoPanel.add(Box.createVerticalStrut(20));
-        textInfoPanel.add(nameLabel);
+        textInfoPanel.add(Box.createVerticalStrut(15));
+        textInfoPanel.add(nameAndFollowPanel);
         textInfoPanel.add(Box.createVerticalStrut(5));
         textInfoPanel.add(memberSince);
 
@@ -108,7 +186,7 @@ public class UserView extends JPanel {
         JPanel statsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 30, 20));
         statsPanel.setBackground(COLOR_BACKGROUND_DARK);
 
-        statsPanel.add(createStatItem( user.getVu().getLesMedias().size() + "", "VUS"));
+        statsPanel.add(createStatItem(user.getVu().getLesMedias().size() + "", "VUS"));
         statsPanel.add(createStatItem(user.getFollower().size() + "", "FOLLOWERS"));
         statsPanel.add(createStatItem(user.getSuivi().size() + "", "SUIVIS"));
 

@@ -1,10 +1,7 @@
 package controleurs;
 
-import main.ApplicationMedias;
-import modeles.user.Playlist;
+import main.FactoryMedia;
 import vues.FactoryView;
-import vues.PlaylistView;
-import vues.PlaylistsView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +15,7 @@ public class LogController {
             reloadLayout(center);
             center.removeAll();
 
-            FactoryView factoryview = new FactoryView(ApplicationMedias.getFactoryMedia(), true);
+            FactoryView factoryview = new FactoryView(FactoryMedia.getFactoryMedia(), true);
 
             center.add(factoryview, BorderLayout.CENTER);
 
@@ -34,8 +31,8 @@ public class LogController {
             reloadLayout(center);
             center.removeAll();
 
-            ApplicationMedias.getFactoryMedia().setUserLoggedWithSelma();
-            FactoryView factoryview = new FactoryView(ApplicationMedias.getFactoryMedia(), true);
+            FactoryMedia.getFactoryMedia().setUserLoggedWithSelma();
+            FactoryView factoryview = new FactoryView(FactoryMedia.getFactoryMedia(), true);
 
             center.add(factoryview, BorderLayout.CENTER);
 

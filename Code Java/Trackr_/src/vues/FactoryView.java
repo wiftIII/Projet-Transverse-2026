@@ -1,7 +1,7 @@
 package vues;
 
 import controleurs.*;
-import main.ApplicationMedias;
+import main.FactoryMedia;
 import modeles.media.Media;
 import modeles.user.Playlist;
 import utils.Utils;
@@ -14,7 +14,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -38,9 +37,9 @@ public class FactoryView extends JPanel {
     private JScrollPane contentScrollPane;
     private JPanel contentContainer;
 
-    ApplicationMedias factoryMedia;
+    FactoryMedia factoryMedia;
 
-    public FactoryView(ApplicationMedias factoryMedia, Boolean sideBar) {
+    public FactoryView(FactoryMedia factoryMedia, Boolean sideBar) {
         this.setLayout(new BorderLayout());
         this.setBackground(COLOR_BACKGROUND_DARK);
 
@@ -91,7 +90,10 @@ public class FactoryView extends JPanel {
         searchPanel.setBackground(COLOR_BACKGROUND_DARK);
         searchPanel.setBorder(new EmptyBorder(20, 30, 10, 30));
 
-        searchField = new JTextField("Rechercher un film, une série, un réalisateur...");
+        // --- DANS LE CONSTRUCTEUR FactoryView ---
+        // (Remplace la section existante de ton searchField par celle-ci)
+
+                searchField = new JTextField("Rechercher un film, une série, un réalisateur...");
         searchField.setFont(new Font("Arial", Font.PLAIN, 14));
         searchField.setForeground(new Color(150, 150, 150));
         searchField.setBackground(COLOR_CARD_BACKGROUND);
@@ -100,6 +102,7 @@ public class FactoryView extends JPanel {
                 new EmptyBorder(10, 15, 10, 15)
         ));
 
+// Nettoyage du texte par défaut au clic
         searchField.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -108,6 +111,17 @@ public class FactoryView extends JPanel {
                     searchField.setForeground(COLOR_TEXT_LIGHT);
                 }
             }
+        });
+
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { filtrerEtAfficherMedias(); }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { filtrerEtAfficherMedias(); }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { filtrerEtAfficherMedias(); }
         });
 
         searchPanel.add(searchField, BorderLayout.CENTER);
@@ -188,7 +202,7 @@ public class FactoryView extends JPanel {
             // On vide le panneau avant de remettre de nouveaux éléments
             listsdesplaylistPanel.removeAll();
 
-            List<Media> tousLesMedias = ApplicationMedias.getFactoryMedia().getMediaEnVrac();
+            List<Media> tousLesMedias = FactoryMedia.getFactoryMedia().getMediaEnVrac();
             int totalMedias = tousLesMedias.size();
 
             if (totalMedias > 0) {
@@ -237,7 +251,7 @@ public class FactoryView extends JPanel {
         listsdesplaylistPanel.setBackground(COLOR_BACKGROUND_DARK);
         listsdesplaylistPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        ApplicationMedias.getFactoryMedia().getUserLogged().getSuivi().forEach(suivi -> {
+        FactoryMedia.getFactoryMedia().getUserLogged().getSuivi().forEach(suivi -> {
 
             // 1. Création d'un panel conteneur (wrapper) pour empiler la carte et le badge
             JPanel wrapperPanel = new JPanel();
@@ -245,7 +259,7 @@ public class FactoryView extends JPanel {
             wrapperPanel.setBackground(COLOR_BACKGROUND_DARK);
 
             // 2. Récupération de la carte existante
-            JPanel playlistCard = createPlaylistItem(suivi.getMesPlaylists().get(new Random().nextInt(0, ApplicationMedias.getFactoryMedia().getUserLogged().getMesPlaylists().size() - 1)));
+            JPanel playlistCard = createPlaylistItem(suivi.getMesPlaylists().get(new Random().nextInt(0, FactoryMedia.getFactoryMedia().getUserLogged().getMesPlaylists().size() - 1)));
 
             // 3. Ajout de l'encadré vert (bordure de 2 pixels d'épaisseur)
             // 3. Ajout de l'encadré vert avec un espacement intérieur
@@ -295,7 +309,7 @@ public class FactoryView extends JPanel {
         listsdesplaylistPanel.setBackground(COLOR_BACKGROUND_DARK);
         listsdesplaylistPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        ApplicationMedias.getFactoryMedia().getUserLogged().getMesPlaylists().forEach(me -> {
+        FactoryMedia.getFactoryMedia().getUserLogged().getMesPlaylists().forEach(me -> {
             JPanel playlistCard = createPlaylistItem(me);
             listsdesplaylistPanel.add(playlistCard);
         });
@@ -489,6 +503,97 @@ public class FactoryView extends JPanel {
         FactoryController.mouseDesigned(button);
 
         return button;
+    }
+
+    // --- NOUVELLES MÉTHODES À RAJOUTER EN BAS DE LA CLASSE ---
+
+    /**
+     * Filtre dynamiquement le panneau central avec les résultats de la recherche.
+     */
+    private void filtrerEtAfficherMedias() {
+        String saisie = searchField.getText().trim().toLowerCase();
+
+        // Si le champ est vide ou a le texte par défaut, on réaffiche tout ou le comportement de base
+        if (saisie.isEmpty() || saisie.equals("rechercher un film, une série, un réalisateur...")) {
+            reconstruireAffichageDeBase();
+            return;
+        }
+
+        // 1. Récupérer et TRIER la liste par titre (Obligatoire pour la dichotomie)
+        List<Media> listeTriee = new java.util.ArrayList<>(factoryMedia.getMediaEnVrac());
+        listeTriee.sort((m1, m2) -> m1.getTitre().compareToIgnoreCase(m2.getTitre()));
+
+        // 2. Vider le conteneur visuel actuel
+        contentContainer.removeAll();
+
+        // 3. Créer un panel pour afficher les résultats sous forme de grille/liste
+        JPanel resultatsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 20));
+        resultatsPanel.setBackground(COLOR_BACKGROUND_DARK);
+        resultatsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Titre des résultats
+        JLabel titreResultats = new JLabel("Résultats de la recherche");
+        titreResultats.setFont(new Font("Arial", Font.BOLD, 20));
+        titreResultats.setForeground(COLOR_TEXT_LIGHT);
+        titreResultats.setAlignmentX(Component.LEFT_ALIGNMENT);
+        contentContainer.add(titreResultats);
+        contentContainer.add(Box.createRigidArea(new Dimension(0, 15)));
+
+        // 4. Exécuter la recherche dichotomique pour trouver le premier index correspondant
+        int indexInitial = rechercheDichotomiquePrefixe(listeTriee, saisie);
+
+        if (indexInitial != -1) {
+            // Comme la liste est triée, les autres résultats qui commencent par la même lettre
+            // se trouvent juste à côté (les index suivants). On les lit séquentiellement.
+            for (int i = indexInitial; i < listeTriee.size(); i++) {
+                Media m = listeTriee.get(i);
+                if (m.getTitre().toLowerCase().startsWith(saisie)) {
+                    resultatsPanel.add(createMediaItem(m));
+                } else {
+                    break; // Dès que ça ne commence plus par la saisie, on stoppe (gain de performance énorme)
+                }
+            }
+        }
+
+        contentContainer.add(resultatsPanel);
+
+        // 5. Rafraîchir l'interface graphique de Swing
+        contentContainer.revalidate();
+        contentContainer.repaint();
+    }
+
+    /**
+     * Algorithme de recherche dichotomique adapté pour trouver le PREMIER élément
+     * dont le titre commence par le préfixe recherché.
+     */
+    private int rechercheDichotomiquePrefixe(List<Media> liste, String prefixe) {
+        int debut = 0;
+        int fin = liste.size() - 1;
+        int resultatIndex = -1;
+
+        while (debut <= fin) {
+            int milieu = debut + (fin - debut) / 2;
+            String titreMilieu = liste.get(milieu).getTitre().toLowerCase();
+
+            if (titreMilieu.startsWith(prefixe)) {
+                resultatIndex = milieu; // On a trouvé une correspondance !
+                fin = milieu - 1;       // Mais on continue à chercher à gauche pour avoir le TOUT PREMIER dans l'ordre alphabétique
+            } else if (titreMilieu.compareTo(prefixe) < 0) {
+                debut = milieu + 1;
+            } else {
+                fin = milieu - 1;
+            }
+        }
+        return resultatIndex;
+    }
+
+    private void reconstruireAffichageDeBase() {
+        contentContainer.removeAll();
+        contentContainer.add(createMesCoupDeCoeurPanel("Mes listes de films"));
+        contentContainer.add(createMesSuivis("Listes que tu suis"));
+        contentContainer.add(createMediasConseille("Medias Conseillé"));
+        contentContainer.revalidate();
+        contentContainer.repaint();
     }
 
     public JButton getBtnDebugFilm() { return btnDebugFilm; }

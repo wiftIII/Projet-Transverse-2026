@@ -1,6 +1,6 @@
 package vues;
 
-import main.ApplicationMedias;
+import main.FactoryMedia;
 import modeles.media.Media;
 import modeles.media.Film;
 import modeles.media.Serie;
@@ -101,7 +101,7 @@ public class MediaView extends JPanel {
         JButton btnHeart = createCircleButton("❤");
         JButton btnCheck = createCircleButton("✔");
 
-        User currentUser = ApplicationMedias.getFactoryMedia().getUserLogged();
+        User currentUser = FactoryMedia.getFactoryMedia().getUserLogged();
 
         boolean isAlreadyLiked = currentUser.getLike().getLesMedias().contains(media);
         btnHeart.setBackground(isAlreadyLiked ? Color.RED : COLOR_TEXT_LIGHT);
@@ -353,7 +353,7 @@ public class MediaView extends JPanel {
             panelAvis.removeAll(); // On vide les anciennes cartes
             media.getLesAvis().forEach(avis -> {
                 JPanel carte = createCarteCritique(avis);
-                carte.setAlignmentX(Component.LEFT_ALIGNMENT); // Alignement uniforme à gauche
+                carte.setAlignmentX(Component.CENTER_ALIGNMENT); // Alignement uniforme à gauche
                 panelAvis.add(carte);
                 panelAvis.add(Box.createRigidArea(new Dimension(0, 15)));
             });
@@ -482,7 +482,7 @@ public class MediaView extends JPanel {
         String dateStr = avis.getDateDeCreation().toLocaleString().split(",")[0];
         String etoiles = "★".repeat(avis.getNombreEtoiles()) + "☆".repeat(5 - avis.getNombreEtoiles());
 
-        JLabel infoAvisLabel = new JLabel(String.format("%s  •  Par %s  •  %s", etoiles, Utils.createBadge(avis.getCreateur().getPseudo()), dateStr));
+        JLabel infoAvisLabel = new JLabel(String.format("%s  •  Par %s  •  %s", etoiles, avis.getCreateur().getPseudo(), dateStr));
         infoAvisLabel.setFont(new Font("Dialog", Font.BOLD, 12));
         infoAvisLabel.setForeground(new Color(255, 215, 0)); // Couleur Or pour les étoiles/infos
 

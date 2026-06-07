@@ -2,7 +2,7 @@ package vues;
 
 import controleurs.FactoryController;
 import controleurs.LogController;
-import main.ApplicationMedias;
+import main.FactoryMedia;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -20,7 +20,7 @@ public class LogView extends JPanel {
     private JButton btnSelma;
     private JButton btnCreateProfile;
 
-    ApplicationMedias factoryMedia;
+    FactoryMedia factoryMedia;
 
     public LogView() {
         // 1. GridBagLayout permet de centrer parfaitement le panneau interne au milieu de la fenêtre

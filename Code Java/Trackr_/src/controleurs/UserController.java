@@ -1,6 +1,6 @@
 package controleurs;
 
-import main.ApplicationMedias;
+import main.FactoryMedia;
 import modeles.user.User;
 import vues.PlaylistsView;
 import vues.UserView;
@@ -15,7 +15,7 @@ public class UserController {
             JPanel center = jPanel;
             center.removeAll();
 
-            PlaylistsView playlistPage = new PlaylistsView(ApplicationMedias.getFactoryMedia().getUserLogged());
+            PlaylistsView playlistPage = new PlaylistsView(FactoryMedia.getFactoryMedia().getUserLogged());
 
             center.add(playlistPage, BorderLayout.CENTER);
 

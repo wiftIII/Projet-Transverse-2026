@@ -1,31 +1,30 @@
 package main;
 
 import modeles.media.*;
-import modeles.user.Avis;
 import modeles.user.Playlist;
 import modeles.user.User;
-import utils.Utils;
 import vues.FactoryView;
 import vues.LogView;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import static utils.Utils.genererEpisodesPourSerie;
 
-public class ApplicationMedias {
+public class FactoryMedia {
 
     User selma;
     User USER_LOGGED;
     List<Media> mediaEnVrac;
     List<User> tousLesUtilisateurs;
 
-    public static ApplicationMedias factoryMedia;
+    public static FactoryMedia factoryMedia;
     public static FactoryView factoryview;
 
-    public ApplicationMedias() {
+    public FactoryMedia() {
 
         factoryMedia = this;
 
@@ -95,7 +94,6 @@ public class ApplicationMedias {
         Film f26 = new Film(Categorie.AVENTURE, "Jurassic Park", new Date(93, 9, 20), "Steven Spielberg", null, null, "2h07");
         Film f27 = new Film(Categorie.AVENTURE, "Le Monde Perdu - Jurassic Park", new Date(97, 9, 22), "Steven Spielberg", f26, null, "2h09");
         Film f28 = new Film(Categorie.SF, "Retour vers le futur", new Date(85, 9, 23), "Robert Zemeckis", null, null, "1h56");
-
         Film f29 = new Film(Categorie.SF, "Retour vers le futur II", new Date(89, 10, 22), "Robert Zemeckis", f28, null, "1h48");
         Film f30 = new Film(Categorie.SF, "Retour vers le futur III", new Date(90, 4, 25), "Robert Zemeckis", f29, null, "1h58");
 
@@ -220,7 +218,12 @@ public class ApplicationMedias {
         genererEpisodesPourSerie(s19, "1h00", 3); // The Boys
         genererEpisodesPourSerie(s20, "1h00", 3); // Succession
 
-        for (Media e : mediaEnVrac) {
+        List<Media> copieMelangee = new ArrayList<>(mediaEnVrac);
+        Collections.shuffle(copieMelangee);
+
+        int limite = Math.min(10, copieMelangee.size());
+        for (int i = 0; i < limite; i++) {
+            Media e = copieMelangee.get(i);
             selma.ajouterAuxFavoris(e);
         }
 
@@ -573,7 +576,7 @@ public class ApplicationMedias {
     }
 
     public static void main(String[] args) {
-        new ApplicationMedias();
+        new FactoryMedia();
     }
 
     public static FactoryView getFactoryview() {
@@ -588,7 +591,7 @@ public class ApplicationMedias {
         this.selma = selma;
     }
 
-    public static ApplicationMedias getFactoryMedia() {
+    public static FactoryMedia getFactoryMedia() {
         return factoryMedia;
     }
 

@@ -1,7 +1,6 @@
 package controleurs;
 
-import main.ApplicationMedias;
-import modeles.user.Playlist;
+import main.FactoryMedia;
 import vues.*;
 
 import javax.swing.*;
@@ -33,7 +32,7 @@ public class FactoryController {
             JPanel center = jPanel;
             center.removeAll();
 
-            UserView profilPage = new UserView(ApplicationMedias.getFactoryMedia().getUserLogged());
+            UserView profilPage = new UserView(FactoryMedia.getFactoryMedia().getUserLogged());
 
             center.add(profilPage, BorderLayout.CENTER);
 
@@ -47,7 +46,7 @@ public class FactoryController {
             JPanel center = jPanel;
             center.removeAll();
 
-            FactoryView factoryview = new FactoryView(ApplicationMedias.getFactoryMedia(), false);
+            FactoryView factoryview = new FactoryView(FactoryMedia.getFactoryMedia(), false);
 
             center.add(factoryview, BorderLayout.CENTER);
 
@@ -61,7 +60,7 @@ public class FactoryController {
             JPanel center = jPanel;
             center.removeAll();
 
-            PlaylistsView playlistPage = new PlaylistsView(ApplicationMedias.getFactoryMedia().getUserLogged());
+            PlaylistsView playlistPage = new PlaylistsView(FactoryMedia.getFactoryMedia().getUserLogged());
 
             center.add(playlistPage, BorderLayout.CENTER);
 
@@ -75,7 +74,7 @@ public class FactoryController {
             JPanel center = jPanel;
             center.removeAll();
 
-            ApplicationMedias.getFactoryMedia().setUserLogged(null);
+            FactoryMedia.getFactoryMedia().setUserLogged(null);
 
             LogView logview = new LogView();
 
